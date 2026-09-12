@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#e4002b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ΑΓΟΡΕΣ 360°</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --bg:#0e0f13; --bg2:#15171d; --panel:#1b1e26; --panel2:#232733;
+  --line:#2c3140; --txt:#f2f4f8; --muted:#9aa3b2;
+  --red:#e4002b; --red2:#ff2a4d; --redsoft:rgba(228,0,43,.14);
+  --gold:#e8c14a; --ok:#3ea6ff; --warn:#ffb020;
+  --radius:14px; --shadow:0 8px 28px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Segoe UI",system-ui,Arial,sans-serif;
+  background:radial-gradient(1200px 600px at 20% -10%,#1a1c24,transparent),var(--bg);
+  color:var(--txt); min-height:100vh; -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+a{color:var(--red2);text-decoration:none}
+a:hover{text-decoration:underline}
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(180deg,#1a1d25,#121319);
+  border-bottom:2px solid var(--red);
+  padding:12px 16px;box-shadow:var(--shadow);
+  padding-top:calc(12px + env(safe-area-inset-top));
+}
+.brand{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{
+  width:40px;height:40px;border-radius:11px;flex:0 0 auto;
+  background:linear-gradient(135deg,var(--red),#7a0016);
+  display:grid;place-items:center;font-size:21px;box-shadow:0 4px 14px rgba(228,0,43,.4)
+}
+.brand h1{font-size:19px;margin:0;letter-spacing:.5px}
+.brand .sub{color:var(--muted);font-size:12px;margin-top:2px}
+.tag{margin-left:auto;font-size:11px;color:var(--muted);text-align:right;line-height:1.4}
+nav.tabs{display:flex;gap:4px;padding:8px 10px 0;background:var(--bg2);position:sticky;top:64px;z-index:40;
+  border-bottom:1px solid var(--line);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{
+  background:transparent;border:none;color:var(--muted);
+  padding:11px 14px;font-size:14px;cursor:pointer;border-radius:10px 10px 0 0;
+  border-bottom:3px solid transparent;transition:.15s;white-space:nowrap;flex:0 0 auto
+}
+nav.tabs button:hover{color:var(--txt);background:var(--panel)}
+nav.tabs button.active{color:#fff;background:var(--panel);border-bottom-color:var(--red)}
+main{max-width:1100px;margin:0 auto;padding:16px 14px 90px}
+.view{display:none;animation:fade .25s}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+input,select,textarea{
+  background:var(--panel2);border:1px solid var(--line);color:var(--txt);
+  padding:11px 12px;border-radius:10px;font-size:16px;outline:none;font-family:inherit
+}
+input:focus,select:focus,textarea:focus{border-color:var(--red)}
+input[type=search]{flex:1;min-width:180px}
+.btn{
+  background:var(--red);color:#fff;border:none;padding:11px 16px;border-radius:10px;
+  cursor:pointer;font-size:15px;font-weight:600;transition:.15s;white-space:nowrap
+}
+.btn:hover{background:var(--red2)}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--txt)}
+.btn.ghost:hover{border-color:var(--red);color:#fff}
+.btn.sm{padding:7px 11px;font-size:13px}
+.btn.big{padding:16px 18px;font-size:16px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--muted);
+  padding:8px 13px;border-radius:20px;cursor:pointer;font-size:13px;transition:.15s;white-space:nowrap}
+.chip:hover{color:var(--txt)}
+.chip.active{background:var(--redsoft);border-color:var(--red);color:#fff}
+.muted{color:var(--muted)}
+.hint{color:var(--muted);font-size:13px;margin:8px 0;line-height:1.5}
+h2.section{font-size:17px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 4px;font-size:15px}
+.card .cat{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.ptable{width:100%;border-collapse:collapse;font-size:13px}
+.ptable td{padding:6px 6px;border-top:1px solid var(--line)}
+.ptable td:first-child{color:var(--muted)}
+.ptable td:last-child{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ptable tr.best td{color:#fff}
+.ptable tr.best td:last-child{color:var(--red2);font-weight:700}
+.badge{display:inline-block;background:var(--redsoft);color:var(--red2);border:1px solid var(--red);
+  font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px;font-weight:600}
+.perunit{font-size:11px;color:var(--muted)}
+.noprice{color:var(--muted);font-size:13px;font-style:italic;padding:6px 0}
+.trend{font-size:11px;font-weight:700;margin-left:6px}
+.trend.up{color:var(--warn)}
+.trend.down{color:var(--ok)}
+.card .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.online{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.online a{font-size:12px;background:var(--panel2);border:1px solid var(--line);padding:6px 10px;border-radius:8px;color:var(--txt)}
+.online a:hover{border-color:var(--red);text-decoration:none}
+.histbox{margin-top:10px;border-top:1px dashed var(--line);padding-top:8px;font-size:12px}
+.histbox .h{display:flex;justify-content:space-between;padding:3px 0;color:var(--muted)}
+.histbox .h b{color:var(--txt);font-weight:600}
+.cl{margin-bottom:8px}
+.cl summary{cursor:pointer;padding:13px 14px;background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;font-size:15px;font-weight:600;list-style:none;display:flex;align-items:center;gap:10px}
+.cl summary::-webkit-details-marker{display:none}
+.cl summary .count{margin-left:auto;font-size:12px;color:var(--muted);font-weight:400}
+.cl[open] summary{border-radius:12px 12px 0 0;border-bottom-color:transparent}
+.cl .items{border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:8px;background:var(--bg2)}
+.clitem{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px}
+.clitem:hover{background:var(--panel)}
+.clitem input[type=checkbox]{width:20px;height:20px;accent-color:var(--red);cursor:pointer;flex:0 0 auto}
+.clitem .nm{flex:1}
+.clitem.done .nm{text-decoration:line-through;color:var(--muted)}
+.slist{list-style:none;padding:0;margin:0}
+.slist li{display:flex;align-items:center;gap:10px;padding:11px 12px;background:var(--panel);
+  border:1px solid var(--line);border-radius:10px;margin-bottom:8px}
+.slist li .nm{flex:1;min-width:0}
+.slist li .qty{width:60px;text-align:center}
+.slist .price{font-variant-numeric:tabular-nums;min-width:64px;text-align:right}
+.totals{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
+.tot{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.tot.best{border-color:var(--red);background:var(--redsoft)}
+.tot .s{font-size:12px;color:var(--muted)}
+.tot .v{font-size:20px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+.tot.best .v{color:var(--red2)}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th,.tbl td{padding:8px;border:1px solid var(--line);text-align:left;white-space:nowrap}
+.tbl th{background:var(--panel2);position:sticky;top:0}
+.tbl input{padding:7px 8px;width:78px;font-size:14px}
+.tbl .pn{min-width:170px;white-space:normal}
+.empty{text-align:center;color:var(--muted);padding:40px 20px}
+.footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--red);color:#fff;
+  padding:12px 20px;border-radius:10px;box-shadow:var(--shadow);z-index:100;opacity:0;transition:.25s;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.badge-count{background:var(--red);color:#fff;border-radius:20px;font-size:11px;padding:1px 7px;margin-left:5px}
+#receiptPreview{max-width:100%;border-radius:12px;border:1px solid var(--line);margin-top:12px;display:none}
+#scanOverlay{position:fixed;inset:0;z-index:200;background:#000;display:none;align-items:center;justify-content:center;flex-direction:column}
+#scanOverlay.on{display:flex}
+#scanVideo{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+#scanFrame{position:relative;width:min(80vw,340px);height:180px;border:3px solid var(--red);border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.45);z-index:2}
+#scanHintLive{position:absolute;bottom:110px;left:0;right:0;text-align:center;color:#fff;z-index:3;font-size:15px;text-shadow:0 1px 3px #000;padding:0 20px}
+#scanClose{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);z-index:3}
+.scanlog{margin-top:12px}
+.scanlog .e{display:flex;justify-content:space-between;gap:10px;padding:9px 12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-bottom:6px;font-size:13px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;color:var(--muted)}
+@media(max-width:640px){
+  .brand h1{font-size:17px}.tag{display:none}
+  main{padding:14px 12px 90px}
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">🛒</div>
+    <div>
+      <h1>ΑΓΟΡΕΣ 360°</h1>
+      <div class="sub">Σύγκριση τιμών & λίστα αγορών νοικοκυριού</div>
+    </div>
+    <div class="tag">Offline · Τοπική αποθήκευση<br>📷 Barcode · 📈 Ιστορικό τιμών</div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="active" data-view="compare">🔍 Σύγκριση</button>
+  <button data-view="home">🏠 Τι χρειάζεται</button>
+  <button data-view="cart">🛒 Λίστα<span class="badge-count" id="cartBadge" style="display:none">0</span></button>
+  <button data-view="scan">📷 Σάρωση</button>
+  <button data-view="editor">💶 Βάση & Τιμές</button>
+  <button data-view="about">ℹ️ Οδηγίες</button>
+</nav>
+
+<main>
+  <!-- ΣΥΓΚΡΙΣΗ -->
+  <section id="compare" class="view active">
+    <div class="row" style="margin-bottom:10px">
+      <input type="search" id="search" placeholder="🔍 Ψάξε: γάλα, στρώμα, σκούπα, παπούτσια…">
+      <button class="btn ghost" id="clearSearch">Καθαρισμός</button>
+    </div>
+    <div class="row" id="catFilters" style="margin-bottom:14px"></div>
+    <div class="grid" id="prodGrid"></div>
+  </section>
+
+  <!-- ΝΟΙΚΟΚΥΡΙΟ -->
+  <section id="home" class="view">
+    <h2 class="section">🏠 Τι χρειάζεται ένα νοικοκυριό</h2>
+    <p class="hint">Λίστες με τα βασικά ανά χώρο του σπιτιού. Τσέκαρε ό,τι έχεις ήδη. 🛒 = πρόσθεσέ το στη λίστα αγορών · 🔎 = ψάξε τιμές online.</p>
+    <div id="checklists"></div>
+  </section>
+
+  <!-- ΛΙΣΤΑ -->
+  <section id="cart" class="view">
+    <div class="row" style="justify-content:space-between;margin-bottom:10px">
+      <h2 class="section" style="margin:0;border:none">🛒 Η λίστα αγορών μου</h2>
+      <div class="row">
+        <button class="btn ghost sm" id="printCart">🖨️ Εκτύπωση</button>
+        <button class="btn ghost sm" id="clearCart">Καθαρισμός</button>
+      </div>
+    </div>
+    <div id="cartList"></div>
+    <h2 class="section">💶 Σύνολο κόστους ανά κατάστημα</h2>
+    <div class="totals" id="cartTotals"></div>
+  </section>
+
+  <!-- ΣΑΡΩΣΗ / ΓΡΗΓΟΡΗ ΚΑΤΑΧΩΡΗΣΗ -->
+  <section id="scan" class="view">
+    <h2 class="section">📷 Σάρωση & Γρήγορη καταχώρηση τιμής</h2>
+    <p class="hint">Ιδανικό στο κινητό. Σκάναρε το barcode ενός προϊόντος ή τράβα φωτο της απόδειξης/ταμπέλας και καταχώρησε γρήγορα την τιμή στο κατάστημα που ψώνισες.</p>
+    <button class="btn ghost" id="installBtn" style="display:none;width:100%;margin-bottom:10px">📲 Εγκατάσταση στην αρχική οθόνη</button>
+    <button class="btn big" id="btnLiveScan" style="margin-bottom:10px">🎥 Ζωντανή σάρωση barcode (κάμερα)</button>
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+      <button class="btn big ghost" id="btnBarcode">📷 Φωτο barcode</button>
+      <button class="btn big ghost" id="btnReceipt">🧾 Φωτο απόδειξης</button>
+    </div>
+    <input type="file" id="fileBarcode" accept="image/*" capture="environment" hidden>
+    <input type="file" id="fileReceipt" accept="image/*" capture="environment" hidden>
+    <div id="scanStatus" class="hint"></div>
+    <img id="receiptPreview" alt="Απόδειξη">
+
+    <div class="card" style="margin-top:14px">
+      <h3>⚡ Γρήγορη καταχώρηση</h3>
+      <div class="row" style="margin-top:10px;align-items:flex-end">
+        <div class="field" style="flex:2;min-width:180px">
+          <label>Προϊόν (γράψε ή διάλεξε)</label>
+          <input id="qeProd" list="qeProdList" placeholder="π.χ. Γάλα φρέσκο πλήρες" autocomplete="off">
+          <datalist id="qeProdList"></datalist>
+        </div>
+        <div class="field" style="flex:1;min-width:130px">
+          <label>Κατάστημα</label>
+          <select id="qeStore"></select>
+        </div>
+        <div class="field" style="width:110px">
+          <label>Τιμή €</label>
+          <input id="qePrice" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00">
+        </div>
+        <button class="btn" id="qeSave">✔ Καταχώρηση</button>
+      </div>
+      <div id="qeBarcodeInfo" class="hint" style="margin-top:8px"></div>
+      <div class="scanlog" id="scanLog"></div>
+    </div>
+  </section>
+
+  <!-- ΒΑΣΗ -->
+  <section id="editor" class="view">
+    <h2 class="section">💶 Βάση προϊόντων & τιμών</h2>
+    <p class="hint">Καταχώρησε/διόρθωσε τιμές ανά κατάστημα. Γράψε την τιμή και πάτα εκτός πεδίου — αποθηκεύεται αυτόματα και κρατιέται <b>ιστορικό</b> (↑/↓). Άφησε κενό όπου δεν υπάρχει.</p>
+    <div class="card" style="margin-bottom:14px">
+      <h3>➕ Νέο προϊόν</h3>
+      <div class="row" style="margin-top:10px">
+        <input id="edName" placeholder="Όνομα προϊόντος" style="flex:1;min-width:180px">
+        <select id="edCat"></select>
+        <input id="edSize" type="number" step="0.01" inputmode="decimal" placeholder="Μέγεθος" style="width:100px">
+        <input id="edUnit" placeholder="Μονάδα (kg/L/τεμ)" style="width:140px">
+        <button class="btn" id="addProduct">Προσθήκη</button>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:10px">
+      <label class="muted">Κατηγορία:</label>
+      <select id="edFilter"></select>
+      <input type="search" id="edSearch" placeholder="🔍 φίλτρο ονόματος" style="flex:1;min-width:140px">
+    </div>
+    <div class="tblwrap"><div id="editorTable"></div></div>
+  </section>
+
+  <!-- ΟΔΗΓΙΕΣ -->
+  <section id="about" class="view">
+    <h2 class="section">ℹ️ Πώς δουλεύει</h2>
+    <div class="card" style="margin-bottom:12px">
+      <h3>🔍 Αναζήτηση & Σύγκριση</h3>
+      <p class="hint">Ψάξε οποιοδήποτε προϊόν. Κάθε κάρτα δείχνει τις τιμές ανά σούπερ μάρκετ, ξεχωρίζει την <b>καλύτερη τιμή</b> και υπολογίζει την <b>τιμή ανά μονάδα</b> (€/L, €/kg) για δίκαιη σύγκριση. Δίπλα στην τιμή εμφανίζεται τάση <span class="trend down">▼</span>/<span class="trend up">▲</span> αν έχει αλλάξει.</p>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <h3>📈 Ιστορικό τιμών</h3>
+      <p class="hint">Κάθε φορά που αλλάζεις μια τιμή (χειροκίνητα ή με σάρωση), καταγράφεται με ημερομηνία. Πάτα «📈 Ιστορικό» σε μια κάρτα για να δεις πώς κινήθηκε η τιμή — αν <b>ανέβηκε</b> ή <b>κατέβηκε</b>.</p>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <h3>📷 Σάρωση barcode & απόδειξης</h3>
+      <p class="hint">Στο κινητό, σκάναρε το barcode ενός προϊόντος — αν είναι γνωστό ή βρεθεί online (Open Food Facts) συμπληρώνεται το όνομα. Ή τράβα φωτο της απόδειξης και καταχώρησε γρήγορα τις τιμές. <b>Σημ.:</b> η ανάγνωση barcode απαιτεί Android Chrome/Edge ή desktop Chrome· στο iPhone γράψε το χειροκίνητα.</p>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <h3>🛒 Λίστα αγορών & σύνολα</h3>
+      <p class="hint">Υπολογίζει το <b>σύνολο κόστους σε κάθε σούπερ μάρκετ</b> και το <b>«έξυπνο καλάθι»</b> (κάθε προϊόν από το φθηνότερο μαγαζί).</p>
+    </div>
+    <div class="card">
+      <h3>💾 Δεδομένα & κινητό</h3>
+      <p class="hint">Όλα αποθηκεύονται τοπικά στον browser σου (καμία αποστολή στο internet, εκτός από τη σάρωση barcode που ρωτά το Open Food Facts). Η εφαρμογή είναι ένα αρχείο — δουλεύει σε υπολογιστή & κινητό. Κάνε <b>Εξαγωγή</b> για backup/μεταφορά.</p>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" id="exportBtn">📤 Εξαγωγή</button>
+        <label class="btn ghost" style="cursor:pointer">📥 Εισαγωγή<input type="file" id="importFile" accept="application/json" hidden></label>
+        <button class="btn ghost" id="resetBtn">♻️ Επαναφορά αρχικών</button>
+      </div>
+      <p class="hint" style="margin-top:14px">⚠️ Οι αρχικές τιμές είναι <b>ενδεικτικές</b> για να ξεκινήσεις. Ενημέρωσέ τες με πραγματικές (χειροκίνητα, με σάρωση ή μέσω των online κουμπιών).</p>
+    </div>
+  </section>
+</main>
+
+<div class="footer">ΑΓΟΡΕΣ 360° · Offline εφαρμογή σύγκρισης τιμών & αγορών νοικοκυριού</div>
+
+<div id="scanOverlay">
+  <video id="scanVideo" playsinline muted></video>
+  <div id="scanFrame"></div>
+  <div id="scanHintLive">🎯 Στόχευσε το barcode μέσα στο πλαίσιο…</div>
+  <button class="btn" id="scanClose">✕ Κλείσιμο</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= ΒΑΣΗ ΔΕΔΟΜΕΝΩΝ (seed) ================= */
+window.SEED = {
+  stores: [
+    { id:"ab", name:"ΑΒ Βασιλόπουλος", short:"ΑΒ", site:"https://www.ab.gr" },
+    { id:"skla", name:"Σκλαβενίτης", short:"Σκλαβ.", site:"https://www.sklavenitis.gr" },
+    { id:"masoutis", name:"Μασούτης", short:"Μασ.", site:"https://www.masoutis.gr" },
+    { id:"lidl", name:"Lidl", short:"Lidl", site:"https://www.lidl-hellas.gr" },
+    { id:"mymarket", name:"My market", short:"My m.", site:"https://www.mymarket.gr" },
+    { id:"galaxias", name:"Γαλαξίας", short:"Γαλ.", site:"https://www.galaxias.gr" },
+    { id:"kritikos", name:"Κρητικός", short:"Κρητ.", site:"https://www.kritikos-sm.gr" }
+  ],
+  priceSites: [
+    { id:"ekatanalotis", name:"e-Καταναλωτής", url:q=>"https://e-katanalotis.gov.gr/" },
+    { id:"skroutz", name:"Skroutz", url:q=>"https://www.skroutz.gr/search?keyphrase="+encodeURIComponent(q) },
+    { id:"bestprice", name:"BestPrice", url:q=>"https://www.bestprice.gr/search?q="+encodeURIComponent(q) },
+    { id:"gshop", name:"Google Shopping", url:q=>"https://www.google.com/search?tbm=shop&q="+encodeURIComponent(q) }
+  ],
+  categories: [
+    { id:"t_galakto", name:"Γαλακτοκομικά & Αυγά", icon:"🥛" },
+    { id:"t_fr", name:"Φρούτα & Λαχανικά", icon:"🥦" },
+    { id:"t_kreas", name:"Κρέας & Ψάρι", icon:"🍗" },
+    { id:"t_bakalis", name:"Παντοπωλείο (ξηρά)", icon:"🫙" },
+    { id:"t_konserva", name:"Κονσέρβες & Σάλτσες", icon:"🥫" },
+    { id:"t_katep", name:"Κατεψυγμένα", icon:"🧊" },
+    { id:"t_arto", name:"Αρτοποιία & Πρωινό", icon:"🥖" },
+    { id:"t_snack", name:"Σνακ & Γλυκά", icon:"🍫" },
+    { id:"t_rofimata", name:"Ροφήματα & Ποτά", icon:"☕" },
+    { id:"t_baby", name:"Βρεφικά & Κατοικίδια", icon:"🍼" },
+    { id:"katharismos", name:"Καθαριστικά & Χαρτικά", icon:"🧽" },
+    { id:"prosopiki", name:"Προσωπική φροντίδα", icon:"🧴" },
+    { id:"kouzina", name:"Κουζίνα (σκεύη)", icon:"🍳" },
+    { id:"banio", name:"Μπάνιο", icon:"🚿" },
+    { id:"ypnodomatio", name:"Υπνοδωμάτιο", icon:"🛏️" },
+    { id:"saloni", name:"Σαλόνι / Έπιπλα", icon:"🛋️" },
+    { id:"kathariotita", name:"Σκούπες & Καθαριότητα", icon:"🧹" },
+    { id:"strwmata", name:"Στρώματα & Ύπνος", icon:"🛌" },
+    { id:"syskeves", name:"Συσκευές & Μικροσυσκευές", icon:"🔌" },
+    { id:"rouxa", name:"Ρούχα", icon:"👕" },
+    { id:"papoutsia", name:"Παπούτσια", icon:"👟" },
+    { id:"ergaleia", name:"Εργαλεία & Μαστορέματα", icon:"🔧" }
+  ],
+  /* Προϊόντα. Τα τρόφιμα/είδη σούπερ μάρκετ έχουν "base" τιμή που "απλώνεται"
+     αυτόματα στα καταστήματα (Lidl φθηνότερα κ.λπ.). Τα μη-τρόφιμα έχουν σπάνιες
+     τιμές και βασίζονται στα online κουμπιά. */
+  products: [
+    // ---- Γαλακτοκομικά & Αυγά ----
+    { id:"p_gala", name:"Γάλα φρέσκο πλήρες (1L)", cat:"t_galakto", unit:"L", size:1, base:1.45 },
+    { id:"p_gala_light", name:"Γάλα φρέσκο ελαφρύ 1,5% (1L)", cat:"t_galakto", unit:"L", size:1, base:1.45 },
+    { id:"p_gala_evap", name:"Γάλα εβαπορέ (410g)", cat:"t_galakto", unit:"ml", size:410, base:0.95 },
+    { id:"p_giaourti", name:"Γιαούρτι στραγγιστό 2% (1kg)", cat:"t_galakto", unit:"kg", size:1, base:3.90 },
+    { id:"p_giaourti_agel", name:"Γιαούρτι αγελάδος (4×200g)", cat:"t_galakto", unit:"g", size:800, base:2.20 },
+    { id:"p_feta", name:"Φέτα ΠΟΠ (1kg)", cat:"t_galakto", unit:"kg", size:1, base:8.90 },
+    { id:"p_gouda", name:"Τυρί γκούντα φέτες (200g)", cat:"t_galakto", unit:"g", size:200, base:2.60 },
+    { id:"p_kaseri", name:"Τυρί κασέρι (1kg)", cat:"t_galakto", unit:"kg", size:1, base:11.50 },
+    { id:"p_voutiro", name:"Βούτυρο (250g)", cat:"t_galakto", unit:"g", size:250, base:2.80 },
+    { id:"p_margarini", name:"Μαργαρίνη soft (500g)", cat:"t_galakto", unit:"g", size:500, base:2.40 },
+    { id:"p_avga", name:"Αυγά (6άδα)", cat:"t_galakto", unit:"τεμ", size:6, base:2.10 },
+    { id:"p_avga10", name:"Αυγά (10άδα)", cat:"t_galakto", unit:"τεμ", size:10, base:3.20 },
+    { id:"p_krema_gal", name:"Κρέμα γάλακτος (200ml)", cat:"t_galakto", unit:"ml", size:200, base:1.10 },
+
+    // ---- Φρούτα & Λαχανικά ----
+    { id:"p_banana", name:"Μπανάνες (1kg)", cat:"t_fr", unit:"kg", size:1, base:1.60 },
+    { id:"p_milo", name:"Μήλα (1kg)", cat:"t_fr", unit:"kg", size:1, base:1.80 },
+    { id:"p_portokali", name:"Πορτοκάλια (1kg)", cat:"t_fr", unit:"kg", size:1, base:1.20 },
+    { id:"p_domata", name:"Ντομάτες (1kg)", cat:"t_fr", unit:"kg", size:1, base:1.90 },
+    { id:"p_patata", name:"Πατάτες (1kg)", cat:"t_fr", unit:"kg", size:1, base:0.95 },
+    { id:"p_kremmydi", name:"Κρεμμύδια (1kg)", cat:"t_fr", unit:"kg", size:1, base:0.90 },
+    { id:"p_aggouri", name:"Αγγούρι (τεμ)", cat:"t_fr", unit:"τεμ", size:1, base:0.70 },
+    { id:"p_marouli", name:"Μαρούλι (τεμ)", cat:"t_fr", unit:"τεμ", size:1, base:0.90 },
+    { id:"p_karoto", name:"Καρότα (1kg)", cat:"t_fr", unit:"kg", size:1, base:1.10 },
+    { id:"p_lemoni", name:"Λεμόνια (1kg)", cat:"t_fr", unit:"kg", size:1, base:1.80 },
+    { id:"p_piperia", name:"Πιπεριές (1kg)", cat:"t_fr", unit:"kg", size:1, base:2.50 },
+    { id:"p_kolokithi", name:"Κολοκυθάκια (1kg)", cat:"t_fr", unit:"kg", size:1, base:2.20 },
+
+    // ---- Κρέας & Ψάρι ----
+    { id:"p_kotopoulo", name:"Κοτόπουλο ολόκληρο (1kg)", cat:"t_kreas", unit:"kg", size:1, base:3.90 },
+    { id:"p_stithos", name:"Στήθος κοτόπουλο (1kg)", cat:"t_kreas", unit:"kg", size:1, base:7.50 },
+    { id:"p_kimas", name:"Κιμάς μοσχαρίσιος (1kg)", cat:"t_kreas", unit:"kg", size:1, base:9.80 },
+    { id:"p_xoirini", name:"Χοιρινή μπριζόλα (1kg)", cat:"t_kreas", unit:"kg", size:1, base:6.50 },
+    { id:"p_loukanika", name:"Λουκάνικα (500g)", cat:"t_kreas", unit:"g", size:500, base:3.20 },
+    { id:"p_zampon", name:"Ζαμπόν φέτες (200g)", cat:"t_kreas", unit:"g", size:200, base:2.40 },
+    { id:"p_bacon", name:"Μπέικον (200g)", cat:"t_kreas", unit:"g", size:200, base:2.60 },
+    { id:"p_galopoula", name:"Γαλοπούλα φέτες (200g)", cat:"t_kreas", unit:"g", size:200, base:2.70 },
+
+    // ---- Παντοπωλείο (ξηρά) ----
+    { id:"p_zymarika", name:"Μακαρόνια Νο.6 (500g)", cat:"t_bakalis", unit:"kg", size:0.5, base:0.85 },
+    { id:"p_kofto", name:"Κοφτό μακαρονάκι (500g)", cat:"t_bakalis", unit:"kg", size:0.5, base:0.85 },
+    { id:"p_ryzi", name:"Ρύζι (1kg)", cat:"t_bakalis", unit:"kg", size:1, base:1.95 },
+    { id:"p_basmati", name:"Ρύζι μπασμάτι (500g)", cat:"t_bakalis", unit:"kg", size:0.5, base:1.90 },
+    { id:"p_fakes", name:"Φακές (500g)", cat:"t_bakalis", unit:"kg", size:0.5, base:1.60 },
+    { id:"p_fasolia", name:"Φασόλια (500g)", cat:"t_bakalis", unit:"kg", size:0.5, base:1.70 },
+    { id:"p_revithia", name:"Ρεβίθια (500g)", cat:"t_bakalis", unit:"kg", size:0.5, base:1.65 },
+    { id:"p_ladi", name:"Ελαιόλαδο έξτρα παρθένο (1L)", cat:"t_bakalis", unit:"L", size:1, base:9.20 },
+    { id:"p_ilielaio", name:"Ηλιέλαιο (1L)", cat:"t_bakalis", unit:"L", size:1, base:2.30 },
+    { id:"p_xydi", name:"Ξύδι (400ml)", cat:"t_bakalis", unit:"ml", size:400, base:0.70 },
+    { id:"p_zaxari", name:"Ζάχαρη λευκή (1kg)", cat:"t_bakalis", unit:"kg", size:1, base:1.05 },
+    { id:"p_alati", name:"Αλάτι (1kg)", cat:"t_bakalis", unit:"kg", size:1, base:0.65 },
+    { id:"p_alevri", name:"Αλεύρι για όλες τις χρήσεις (1kg)", cat:"t_bakalis", unit:"kg", size:1, base:0.95 },
+    { id:"p_meli", name:"Μέλι (450g)", cat:"t_bakalis", unit:"g", size:450, base:5.50 },
+    { id:"p_elies", name:"Ελιές (250g)", cat:"t_bakalis", unit:"g", size:250, base:2.20 },
+    { id:"p_taxini", name:"Ταχίνι (300g)", cat:"t_bakalis", unit:"g", size:300, base:3.40 },
+
+    // ---- Κονσέρβες & Σάλτσες ----
+    { id:"p_tonos", name:"Τόνος σε λάδι (3×160g)", cat:"t_konserva", unit:"g", size:480, base:3.20 },
+    { id:"p_domata_kons", name:"Ντομάτα κονκασέ (500g)", cat:"t_konserva", unit:"g", size:500, base:0.80 },
+    { id:"p_peltes", name:"Πελτές ντομάτας (410g)", cat:"t_konserva", unit:"g", size:410, base:1.10 },
+    { id:"p_kalampoki", name:"Καλαμπόκι (340g)", cat:"t_konserva", unit:"g", size:340, base:1.10 },
+    { id:"p_saltsa", name:"Έτοιμη σάλτσα ζυμαρικών (350g)", cat:"t_konserva", unit:"g", size:350, base:1.80 },
+    { id:"p_moustarda", name:"Μουστάρδα (500g)", cat:"t_konserva", unit:"g", size:500, base:1.60 },
+    { id:"p_ketsap", name:"Κέτσαπ (560g)", cat:"t_konserva", unit:"g", size:560, base:1.90 },
+    { id:"p_magioneza", name:"Μαγιονέζα (500ml)", cat:"t_konserva", unit:"ml", size:500, base:2.40 },
+
+    // ---- Κατεψυγμένα ----
+    { id:"p_patates_kat", name:"Πατάτες τηγανιτές κατεψ. (1kg)", cat:"t_katep", unit:"kg", size:1, base:1.90 },
+    { id:"p_arakas", name:"Αρακάς κατεψ. (1kg)", cat:"t_katep", unit:"kg", size:1, base:2.20 },
+    { id:"p_laxanika_kat", name:"Ανάμεικτα λαχανικά κατεψ. (1kg)", cat:"t_katep", unit:"kg", size:1, base:2.30 },
+    { id:"p_psari_kat", name:"Ψάρι φιλέτο κατεψ. (800g)", cat:"t_katep", unit:"g", size:800, base:6.90 },
+    { id:"p_garides", name:"Γαρίδες κατεψ. (500g)", cat:"t_katep", unit:"g", size:500, base:6.50 },
+    { id:"p_pitsa_kat", name:"Πίτσα κατεψ. (τεμ)", cat:"t_katep", unit:"τεμ", size:1, base:2.80 },
+    { id:"p_pagoto", name:"Παγωτό οικογ. (1,5L)", cat:"t_katep", unit:"L", size:1.5, base:4.50 },
+    { id:"p_sfoliata", name:"Σφολιάτα (2 φύλλα)", cat:"t_katep", unit:"τεμ", size:2, base:1.70 },
+
+    // ---- Αρτοποιία & Πρωινό ----
+    { id:"p_psomi", name:"Ψωμί τοστ σταρένιο", cat:"t_arto", unit:"τεμ", size:1, base:1.55 },
+    { id:"p_psomi_xor", name:"Ψωμί χωριάτικο (500g)", cat:"t_arto", unit:"g", size:500, base:1.20 },
+    { id:"p_friganies", name:"Φρυγανιές (250g)", cat:"t_arto", unit:"g", size:250, base:1.40 },
+    { id:"p_dimitriaka", name:"Δημητριακά (375g)", cat:"t_arto", unit:"g", size:375, base:2.60 },
+    { id:"p_vromi", name:"Νιφάδες βρώμης (500g)", cat:"t_arto", unit:"g", size:500, base:1.90 },
+    { id:"p_biskota", name:"Μπισκότα πτι-μπερ (225g)", cat:"t_arto", unit:"g", size:225, base:1.10 },
+    { id:"p_krouasan", name:"Κρουασάν (6τεμ)", cat:"t_arto", unit:"τεμ", size:6, base:2.30 },
+    { id:"p_marmelada", name:"Μαρμελάδα (370g)", cat:"t_arto", unit:"g", size:370, base:2.40 },
+    { id:"p_fystikoboutiro", name:"Φυστικοβούτυρο (350g)", cat:"t_arto", unit:"g", size:350, base:3.20 },
+
+    // ---- Σνακ & Γλυκά ----
+    { id:"p_patatakia", name:"Πατατάκια (150g)", cat:"t_snack", unit:"g", size:150, base:1.60 },
+    { id:"p_garidakia", name:"Γαριδάκια (100g)", cat:"t_snack", unit:"g", size:100, base:1.30 },
+    { id:"p_sokolata", name:"Σοκολάτα γάλακτος (100g)", cat:"t_snack", unit:"g", size:100, base:1.40 },
+    { id:"p_gkofreta", name:"Γκοφρέτα (5τεμ)", cat:"t_snack", unit:"τεμ", size:5, base:1.80 },
+    { id:"p_ksiroi", name:"Ξηροί καρποί ανάμεικτοι (200g)", cat:"t_snack", unit:"g", size:200, base:3.50 },
+    { id:"p_krakers", name:"Κρακεράκια (200g)", cat:"t_snack", unit:"g", size:200, base:1.50 },
+
+    // ---- Ροφήματα & Ποτά ----
+    { id:"p_kafes", name:"Καφές ελληνικός (200g)", cat:"t_rofimata", unit:"kg", size:0.2, base:2.30 },
+    { id:"p_kafes_filtrou", name:"Καφές φίλτρου (500g)", cat:"t_rofimata", unit:"kg", size:0.5, base:4.90 },
+    { id:"p_stigmiaios", name:"Στιγμιαίος καφές (200g)", cat:"t_rofimata", unit:"g", size:200, base:4.50 },
+    { id:"p_tsai", name:"Τσάι (20 φακελάκια)", cat:"t_rofimata", unit:"τεμ", size:20, base:1.80 },
+    { id:"p_ximos", name:"Χυμός πορτοκάλι (1L)", cat:"t_rofimata", unit:"L", size:1, base:1.80 },
+    { id:"p_cola", name:"Αναψυκτικό cola (1,5L)", cat:"t_rofimata", unit:"L", size:1.5, base:1.60 },
+    { id:"p_portokalada", name:"Αναψυκτικό πορτοκαλάδα (1,5L)", cat:"t_rofimata", unit:"L", size:1.5, base:1.50 },
+    { id:"p_nero", name:"Νερό εμφιαλωμένο (6×1,5L)", cat:"t_rofimata", unit:"L", size:9, base:1.65 },
+    { id:"p_bira", name:"Μπύρα (6×330ml)", cat:"t_rofimata", unit:"ml", size:1980, base:4.50 },
+    { id:"p_krasi", name:"Κρασί επιτραπέζιο (750ml)", cat:"t_rofimata", unit:"ml", size:750, base:3.50 },
+
+    // ---- Βρεφικά & Κατοικίδια ----
+    { id:"p_panes", name:"Πάνες μωρού (No.4, 44τεμ)", cat:"t_baby", unit:"τεμ", size:44, base:9.90 },
+    { id:"p_moromantila", name:"Μωρομάντηλα (3×72)", cat:"t_baby", unit:"τεμ", size:216, base:3.90 },
+    { id:"p_vrefiki", name:"Βρεφική κρέμα (150ml)", cat:"t_baby", unit:"ml", size:150, base:3.50 },
+    { id:"p_trofi_skylou", name:"Ξηρά τροφή σκύλου (3kg)", cat:"t_baby", unit:"kg", size:3, base:8.90 },
+    { id:"p_trofi_gatas", name:"Ξηρά τροφή γάτας (1,5kg)", cat:"t_baby", unit:"kg", size:1.5, base:6.50 },
+    { id:"p_ammos", name:"Άμμος γάτας (5kg)", cat:"t_baby", unit:"kg", size:5, base:4.50 },
+
+    // ---- Καθαριστικά & Χαρτικά ----
+    { id:"p_aporr", name:"Απορρυπαντικό πλυντηρίου (40 μεζ.)", cat:"katharismos", unit:"μεζ.", size:40, base:8.90 },
+    { id:"p_malaktiko", name:"Μαλακτικό ρούχων (2L)", cat:"katharismos", unit:"L", size:2, base:3.20 },
+    { id:"p_xlorini", name:"Χλωρίνη (2L)", cat:"katharismos", unit:"L", size:2, base:1.80 },
+    { id:"p_piaton", name:"Υγρό πιάτων (900ml)", cat:"katharismos", unit:"ml", size:900, base:2.10 },
+    { id:"p_tampletes", name:"Ταμπλέτες πλυντ. πιάτων (40τεμ)", cat:"katharismos", unit:"τεμ", size:40, base:6.90 },
+    { id:"p_tzamia", name:"Καθαριστικό τζαμιών (750ml)", cat:"katharismos", unit:"ml", size:750, base:1.90 },
+    { id:"p_banio_kath", name:"Καθαριστικό μπάνιου (750ml)", cat:"katharismos", unit:"ml", size:750, base:2.20 },
+    { id:"p_katharistiko", name:"Καθαριστικό γενικής χρήσης (1L)", cat:"katharismos", unit:"L", size:1, base:2.10 },
+    { id:"p_xarti", name:"Χαρτί υγείας (12 ρολά)", cat:"katharismos", unit:"ρολ.", size:12, base:4.60 },
+    { id:"p_xartik", name:"Χαρτί κουζίνας (2 ρολά)", cat:"katharismos", unit:"ρολ.", size:2, base:1.90 },
+    { id:"p_xartopetsetes", name:"Χαρτοπετσέτες (100τεμ)", cat:"katharismos", unit:"τεμ", size:100, base:1.20 },
+    { id:"p_sakoules", name:"Σακούλες σκουπιδιών (50τεμ)", cat:"katharismos", unit:"τεμ", size:50, base:2.40 },
+    { id:"p_aloumino", name:"Αλουμινόχαρτο (30m)", cat:"katharismos", unit:"m", size:30, base:2.30 },
+    { id:"p_membrani", name:"Μεμβράνη τροφίμων (30m)", cat:"katharismos", unit:"m", size:30, base:1.90 },
+    { id:"p_sfoungarakia", name:"Σφουγγαράκια κουζίνας (5τεμ)", cat:"katharismos", unit:"τεμ", size:5, base:1.30 },
+
+    // ---- Προσωπική φροντίδα ----
+    { id:"p_sampouan", name:"Σαμπουάν (400ml)", cat:"prosopiki", unit:"ml", size:400, base:2.90 },
+    { id:"p_conditioner", name:"Conditioner μαλλιών (400ml)", cat:"prosopiki", unit:"ml", size:400, base:3.10 },
+    { id:"p_sapouni", name:"Αφρόλουτρο (750ml)", cat:"prosopiki", unit:"ml", size:750, base:2.60 },
+    { id:"p_sapouni_xer", name:"Σαπούνι χεριών (300ml)", cat:"prosopiki", unit:"ml", size:300, base:1.80 },
+    { id:"p_odontokrema", name:"Οδοντόκρεμα (75ml)", cat:"prosopiki", unit:"ml", size:75, base:1.90 },
+    { id:"p_odontovourtsa", name:"Οδοντόβουρτσα (2τεμ)", cat:"prosopiki", unit:"τεμ", size:2, base:2.40 },
+    { id:"p_stomatiko", name:"Στοματικό διάλυμα (500ml)", cat:"prosopiki", unit:"ml", size:500, base:3.20 },
+    { id:"p_aposmitiko", name:"Αποσμητικό roll-on (50ml)", cat:"prosopiki", unit:"ml", size:50, base:2.10 },
+    { id:"p_ksirafakia", name:"Ξυραφάκια (5τεμ)", cat:"prosopiki", unit:"τεμ", size:5, base:4.50 },
+    { id:"p_afros_ksir", name:"Αφρός ξυρίσματος (200ml)", cat:"prosopiki", unit:"ml", size:200, base:2.30 },
+    { id:"p_xartomantila", name:"Χαρτομάντηλα τσέπης (10τεμ)", cat:"prosopiki", unit:"τεμ", size:10, base:1.20 },
+    { id:"p_serviettes", name:"Σερβιέτες (16τεμ)", cat:"prosopiki", unit:"τεμ", size:16, base:2.60 },
+    { id:"p_vamvaki", name:"Βαμβάκι (200g)", cat:"prosopiki", unit:"g", size:200, base:1.40 },
+    { id:"p_mpatonetes", name:"Μπατονέτες (200τεμ)", cat:"prosopiki", unit:"τεμ", size:200, base:1.30 },
+
+    // ---- Κουζίνα (σκεύη) ----
+    { id:"p_katsarola", name:"Κατσαρόλα ανοξείδωτη 24cm", cat:"kouzina", unit:"τεμ", size:1, prices:{ lidl:19.99, ab:29.90 }, note:"Τιμές διαφέρουν — δες online" },
+    { id:"p_tigani", name:"Τηγάνι αντικολλητικό 28cm", cat:"kouzina", unit:"τεμ", size:1, prices:{ lidl:12.99, ab:17.90 } },
+    { id:"p_set_maxairia", name:"Σετ μαχαίρια κουζίνας", cat:"kouzina", unit:"σετ", size:1, prices:{} },
+    { id:"p_piata", name:"Σερβίτσιο πιάτων (18 τεμ.)", cat:"kouzina", unit:"σετ", size:1, prices:{} },
+    { id:"p_potiria", name:"Ποτήρια (σετ 6)", cat:"kouzina", unit:"σετ", size:1, prices:{ lidl:5.99 } },
+
+    // ---- Μπάνιο ----
+    { id:"p_petseta", name:"Πετσέτα μπάνιου", cat:"banio", unit:"τεμ", size:1, prices:{ lidl:6.99 } },
+    { id:"p_kourtina_mp", name:"Κουρτίνα μπάνιου", cat:"banio", unit:"τεμ", size:1, prices:{} },
+
+    // ---- Υπνοδωμάτιο ----
+    { id:"p_sentonia", name:"Σετ σεντόνια διπλά", cat:"ypnodomatio", unit:"σετ", size:1, prices:{} },
+    { id:"p_paploma", name:"Πάπλωμα διπλό", cat:"ypnodomatio", unit:"τεμ", size:1, prices:{} },
+    { id:"p_maxilari", name:"Μαξιλάρι ύπνου", cat:"ypnodomatio", unit:"τεμ", size:1, prices:{ lidl:9.99 } },
+
+    // ---- Στρώματα ----
+    { id:"p_strwma_diplo", name:"Στρώμα διπλό (160×200) memory foam", cat:"strwmata", unit:"τεμ", size:1, prices:{}, note:"Σύγκρινε online (Skroutz/BestPrice)" },
+    { id:"p_strwma_mono", name:"Στρώμα μονό (90×200)", cat:"strwmata", unit:"τεμ", size:1, prices:{} },
+
+    // ---- Σκούπες & καθαριότητα ----
+    { id:"p_skoupa", name:"Σκούπα ηλεκτρική (stick)", cat:"kathariotita", unit:"τεμ", size:1, prices:{} },
+    { id:"p_skoupa_xeiros", name:"Σκούπα & φαράσι (χειρός)", cat:"kathariotita", unit:"σετ", size:1, prices:{ lidl:4.99 } },
+    { id:"p_sfougaristra", name:"Σφουγγαρίστρα με κουβά", cat:"kathariotita", unit:"σετ", size:1, prices:{ lidl:12.99 } },
+
+    // ---- Συσκευές ----
+    { id:"p_psygeio", name:"Ψυγειοκαταψύκτης", cat:"syskeves", unit:"τεμ", size:1, prices:{} },
+    { id:"p_plyntirio", name:"Πλυντήριο ρούχων 8kg", cat:"syskeves", unit:"τεμ", size:1, prices:{} },
+    { id:"p_fournos_mikr", name:"Φούρνος μικροκυμάτων", cat:"syskeves", unit:"τεμ", size:1, prices:{ lidl:59.99 } },
+    { id:"p_kafetiera", name:"Καφετιέρα φίλτρου", cat:"syskeves", unit:"τεμ", size:1, prices:{ lidl:24.99 } },
+
+    // ---- Ρούχα ----
+    { id:"p_tshirt", name:"T-shirt βαμβακερό", cat:"rouxa", unit:"τεμ", size:1, prices:{ lidl:4.99 } },
+    { id:"p_jean", name:"Παντελόνι τζιν", cat:"rouxa", unit:"τεμ", size:1, prices:{} },
+    { id:"p_mpoufan", name:"Μπουφάν χειμερινό", cat:"rouxa", unit:"τεμ", size:1, prices:{} },
+
+    // ---- Παπούτσια ----
+    { id:"p_athlitika", name:"Αθλητικά παπούτσια", cat:"papoutsia", unit:"ζευγ.", size:1, prices:{} },
+    { id:"p_mpotakia", name:"Μποτάκια χειμερινά", cat:"papoutsia", unit:"ζευγ.", size:1, prices:{} },
+
+    // ---- Εργαλεία ----
+    { id:"p_katsavidi", name:"Σετ κατσαβίδια", cat:"ergaleia", unit:"σετ", size:1, prices:{ lidl:9.99 } },
+    { id:"p_drapano", name:"Δράπανο/κατσαβίδι μπαταρίας", cat:"ergaleia", unit:"τεμ", size:1, prices:{ lidl:34.99 } }
+  ],
+  checklists: [
+    { id:"cl_kouzina", name:"Κουζίνα — βασικά", icon:"🍳", items:[
+      {n:"Κατσαρόλες (σετ)", pid:"p_katsarola"}, {n:"Τηγάνια", pid:"p_tigani"},
+      {n:"Σετ μαχαίρια", pid:"p_set_maxairia"}, {n:"Σερβίτσιο πιάτων", pid:"p_piata"},
+      {n:"Μαχαιροπίρουνα"}, {n:"Ποτήρια", pid:"p_potiria"}, {n:"Κούπες"}, {n:"Ταπεράκια φαγητού"},
+      {n:"Κουτάλες / σπάτουλες"}, {n:"Σουρωτήρι"}, {n:"Σανίδα κοπής"},
+      {n:"Βραστήρας νερού"}, {n:"Καφετιέρα", pid:"p_kafetiera"}, {n:"Φούρνος μικροκυμάτων", pid:"p_fournos_mikr"},
+      {n:"Τοστιέρα"}, {n:"Πετσέτες κουζίνας"}
+    ]},
+    { id:"cl_trofima", name:"Ντουλάπι τροφίμων — βασικά", icon:"🥫", items:[
+      {n:"Ελαιόλαδο", pid:"p_ladi"}, {n:"Ζυμαρικά", pid:"p_zymarika"}, {n:"Ρύζι", pid:"p_ryzi"},
+      {n:"Ζάχαρη", pid:"p_zaxari"}, {n:"Αλάτι", pid:"p_alati"}, {n:"Αλεύρι", pid:"p_alevri"}, {n:"Καφές", pid:"p_kafes"},
+      {n:"Γάλα", pid:"p_gala"}, {n:"Αυγά", pid:"p_avga"}, {n:"Ψωμί", pid:"p_psomi"},
+      {n:"Όσπρια (φακές)", pid:"p_fakes"}, {n:"Τόνος κονσέρβα", pid:"p_tonos"}, {n:"Νερό", pid:"p_nero"}
+    ]},
+    { id:"cl_banio", name:"Μπάνιο — βασικά", icon:"🚿", items:[
+      {n:"Πετσέτες μπάνιου", pid:"p_petseta"}, {n:"Πετσέτες χεριών"}, {n:"Κουρτίνα μπάνιου", pid:"p_kourtina_mp"},
+      {n:"Σαμπουάν", pid:"p_sampouan"}, {n:"Αφρόλουτρο", pid:"p_sapouni"}, {n:"Οδοντόκρεμα", pid:"p_odontokrema"},
+      {n:"Οδοντόβουρτσες", pid:"p_odontovourtsa"}, {n:"Χαρτί υγείας", pid:"p_xarti"}, {n:"Πιγκάλ"}, {n:"Κάδος μπάνιου"},
+      {n:"Ζυγαριά"}, {n:"Πατάκι μπάνιου"}
+    ]},
+    { id:"cl_ypnodomatio", name:"Υπνοδωμάτιο — βασικά", icon:"🛏️", items:[
+      {n:"Στρώμα", pid:"p_strwma_diplo"}, {n:"Βάση / κρεβάτι"}, {n:"Μαξιλάρια", pid:"p_maxilari"},
+      {n:"Σεντόνια (2 σετ)", pid:"p_sentonia"}, {n:"Πάπλωμα", pid:"p_paploma"}, {n:"Κουβέρτα"},
+      {n:"Ντουλάπα / κρεμάστρες"}, {n:"Κομοδίνο"}, {n:"Φωτιστικό κομοδίνου"}
+    ]},
+    { id:"cl_saloni", name:"Σαλόνι — βασικά", icon:"🛋️", items:[
+      {n:"Καναπές"}, {n:"Τραπεζάκι σαλονιού"}, {n:"Τηλεόραση"}, {n:"Έπιπλο TV"},
+      {n:"Βιβλιοθήκη / ράφια"}, {n:"Χαλί"}, {n:"Κουρτίνες"}, {n:"Φωτιστικό δαπέδου"}
+    ]},
+    { id:"cl_kathariotita", name:"Καθαριότητα — βασικά", icon:"🧹", items:[
+      {n:"Ηλεκτρική σκούπα", pid:"p_skoupa"}, {n:"Σκούπα & φαράσι", pid:"p_skoupa_xeiros"},
+      {n:"Σφουγγαρίστρα & κουβάς", pid:"p_sfougaristra"}, {n:"Απορρυπαντικό ρούχων", pid:"p_aporr"},
+      {n:"Καθαριστικό γενικής χρήσης", pid:"p_katharistiko"}, {n:"Χαρτί κουζίνας", pid:"p_xartik"},
+      {n:"Χλωρίνη", pid:"p_xlorini"}, {n:"Υγρό πιάτων", pid:"p_piaton"}, {n:"Σακούλες σκουπιδιών", pid:"p_sakoules"},
+      {n:"Κάδος απορριμμάτων"}, {n:"Απλώστρα ρούχων"}, {n:"Σίδερο & σιδερώστρα"}
+    ]},
+    { id:"cl_syskeves", name:"Ηλεκτρικές συσκευές — βασικά", icon:"🔌", items:[
+      {n:"Ψυγείο", pid:"p_psygeio"}, {n:"Πλυντήριο ρούχων", pid:"p_plyntirio"}, {n:"Κουζίνα / εστίες"},
+      {n:"Φούρνος"}, {n:"Απορροφητήρας"}, {n:"Κλιματιστικό"}, {n:"Θερμοσίφωνας"}
+    ]},
+    { id:"cl_rouxa", name:"Ρούχα & παπούτσια — βασικά", icon:"👕", items:[
+      {n:"T-shirts", pid:"p_tshirt"}, {n:"Παντελόνια", pid:"p_jean"}, {n:"Πουκάμισα"},
+      {n:"Μπουφάν / παλτό", pid:"p_mpoufan"}, {n:"Εσώρουχα / κάλτσες"}, {n:"Πιτζάμες"},
+      {n:"Αθλητικά παπούτσια", pid:"p_athlitika"}, {n:"Μποτάκια", pid:"p_mpotakia"}, {n:"Παντόφλες"}
+    ]},
+    { id:"cl_ergaleia", name:"Εργαλεία σπιτιού — βασικά", icon:"🔧", items:[
+      {n:"Σετ κατσαβίδια", pid:"p_katsavidi"}, {n:"Δράπανο", pid:"p_drapano"}, {n:"Σφυρί"},
+      {n:"Πένσα / τανάλια"}, {n:"Μέτρο"}, {n:"Αλφάδι"}, {n:"Βύσματα & βίδες"}, {n:"Μονωτική ταινία"}
+    ]}
+  ]
+};
+
+/* Απλώνει την "base" τιμή στα καταστήματα (deterministic ώστε να είναι σταθερή) */
+(function expandSeed(){
+  const F={ab:1.03,skla:1.00,masoutis:1.02,lidl:0.90,mymarket:1.06,galaxias:1.01,kritikos:0.98};
+  function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return h;}
+  function spread(base,id,sid){
+    const j=((Math.abs(hash(id+sid))%61)-30)/1000; // ±3%
+    return Math.max(0.05, Math.round(base*F[sid]*(1+j)*100)/100);
+  }
+  SEED.products.forEach(p=>{
+    if(p.base!=null && !p.prices){
+      p.prices={}; SEED.stores.forEach(s=>{ p.prices[s.id]=spread(p.base,p.id,s.id); });
+    }
+    if(!p.prices) p.prices={};
+    if(!p.history) p.history=[];
+  });
+})();
+
+/* ================= ΛΟΓΙΚΗ ΕΦΑΡΜΟΓΗΣ ================= */
+(function(){
+  "use strict";
+  const LS="agores360_v2";
+  const $=(s,el=document)=>el.querySelector(s);
+  const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+  const euro=n=>(n==null||isNaN(n))?"—":n.toLocaleString("el-GR",{style:"currency",currency:"EUR"});
+  const today=()=>new Date().toISOString().slice(0,10);
+
+  let state=load();
+  function load(){
+    let saved=null; try{ saved=JSON.parse(localStorage.getItem(LS)); }catch(e){}
+    if(saved && saved.products) return saved;
+    return {
+      stores:JSON.parse(JSON.stringify(SEED.stores)),
+      products:JSON.parse(JSON.stringify(SEED.products)),
+      cart:{}, checked:{}
+    };
+  }
+  function save(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
+  const catById=id=>SEED.categories.find(c=>c.id===id);
+  const storeById=id=>state.stores.find(s=>s.id===id)||SEED.stores.find(s=>s.id===id);
+  const prodById=id=>state.products.find(p=>p.id===id);
+  const prodByBarcode=bc=>state.products.find(p=>p.barcode&&p.barcode===bc);
+
+  function priceEntries(p){
+    return Object.entries(p.prices||{}).filter(([k,v])=>v!=null&&!isNaN(v)&&v>0)
+      .map(([sid,v])=>({sid,v:+v})).sort((a,b)=>a.v-b.v);
+  }
+  function bestPrice(p){ const e=priceEntries(p); return e.length?e[0]:null; }
+  function perUnit(p,price){
+    if(!p.size||!p.unit) return null;
+    if(p.unit==="g") return `${euro(price/p.size*1000)}/kg`;
+    if(p.unit==="ml") return `${euro(price/p.size*1000)}/L`;
+    return `${euro(price/p.size)}/${p.unit}`;
+  }
+  function lastTrend(p,sid){
+    const h=(p.history||[]).filter(e=>e.sid===sid&&e.from!=null);
+    if(!h.length) return null;
+    const e=h[h.length-1]; const d=e.v-e.from;
+    if(Math.abs(d)<0.005) return null;
+    return {dir:d<0?"down":"up", d, from:e.from, v:e.v, t:e.t};
+  }
+  function recordPrice(p,sid,newv){
+    p.prices=p.prices||{}; const old=p.prices[sid];
+    if(newv===null||newv===""||isNaN(newv)){ if(old!=null){delete p.prices[sid];} return; }
+    newv=+newv;
+    if(old==null || Math.abs(old-newv)>=0.005){
+      p.history=p.history||[]; p.history.push({sid,from:(old!=null?old:null),v:newv,t:today()});
+      if(p.history.length>40) p.history=p.history.slice(-40);
+    }
+    p.prices[sid]=newv;
+  }
+
+  function onlineLinks(query){
+    const wrap=document.createElement("div"); wrap.className="online";
+    const lbl=document.createElement("span"); lbl.className="muted"; lbl.style.fontSize="11px";
+    lbl.style.alignSelf="center"; lbl.textContent="Ψάξε online:"; wrap.appendChild(lbl);
+    SEED.priceSites.forEach(s=>{
+      const a=document.createElement("a"); a.href=s.url(query); a.target="_blank"; a.rel="noopener";
+      a.textContent=s.name.split(" ")[0]; a.title=s.name+" — "+query; wrap.appendChild(a);
+    });
+    const g=document.createElement("a");
+    g.href="https://www.google.com/search?q="+encodeURIComponent(query+" τιμή σούπερ μάρκετ");
+    g.target="_blank"; g.rel="noopener"; g.textContent="Google"; wrap.appendChild(g);
+    return wrap;
+  }
+
+  $$("nav.tabs button").forEach(b=>b.addEventListener("click",()=>{
+    $$("nav.tabs button").forEach(x=>x.classList.remove("active"));
+    $$(".view").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active"); $("#"+b.dataset.view).classList.add("active");
+    if(b.dataset.view==="cart") renderCart();
+    if(b.dataset.view==="editor") renderEditor();
+    if(b.dataset.view==="scan") initScanTab();
+    window.scrollTo(0,0);
+  }));
+
+  /* ---- Σύγκριση ---- */
+  let activeCat="";
+  function renderCatFilters(){
+    const box=$("#catFilters"); box.innerHTML="";
+    const all=document.createElement("button"); all.className="chip"+(activeCat===""?" active":"");
+    all.textContent="Όλα"; all.onclick=()=>{activeCat="";renderCatFilters();renderProducts();};
+    box.appendChild(all);
+    SEED.categories.forEach(c=>{
+      if(!state.products.some(p=>p.cat===c.id)) return;
+      const b=document.createElement("button"); b.className="chip"+(activeCat===c.id?" active":"");
+      b.textContent=c.icon+" "+c.name;
+      b.onclick=()=>{activeCat=c.id;renderCatFilters();renderProducts();};
+      box.appendChild(b);
+    });
+  }
+  function renderProducts(){
+    const q=$("#search").value.trim().toLowerCase();
+    const grid=$("#prodGrid"); grid.innerHTML="";
+    let list=state.products.filter(p=>{
+      if(activeCat&&p.cat!==activeCat) return false;
+      if(q&&!(p.name.toLowerCase().includes(q)||(catById(p.cat)?.name.toLowerCase().includes(q)))) return false;
+      return true;
+    });
+    if(!list.length){ grid.innerHTML='<div class="empty">Δεν βρέθηκαν προϊόντα.<br>Δοκίμασε άλλη αναζήτηση ή πρόσθεσε προϊόν από την «Βάση & Τιμές».</div>'; return; }
+    const frag=document.createDocumentFragment();
+    list.forEach(p=>frag.appendChild(productCard(p)));
+    grid.appendChild(frag);
+  }
+  function productCard(p){
+    const c=catById(p.cat); const best=bestPrice(p); const entries=priceEntries(p);
+    const card=document.createElement("div"); card.className="card";
+    card.innerHTML=`<h3>${p.name}</h3><div class="cat">${c?c.icon:""} ${c?c.name:""}
+      ${p.size&&p.unit?`<span class="muted">· ${p.size} ${p.unit}</span>`:""}</div>`;
+    if(entries.length){
+      const t=document.createElement("table"); t.className="ptable";
+      entries.forEach(e=>{
+        const st=storeById(e.sid); const isBest=best&&e.sid===best.sid;
+        const tr=document.createElement("tr"); if(isBest) tr.className="best";
+        const tr2=lastTrend(p,e.sid);
+        const trendHtml=tr2?`<span class="trend ${tr2.dir}">${tr2.dir==="down"?"▼":"▲"} ${euro(Math.abs(tr2.d))}</span>`:"";
+        tr.innerHTML=`<td>${st?st.name:e.sid}${isBest?'<span class="badge">καλύτερη</span>':""}</td>
+          <td>${euro(e.v)}${trendHtml}<div class="perunit">${perUnit(p,e.v)||""}</div></td>`;
+        t.appendChild(tr);
+      });
+      card.appendChild(t);
+    } else {
+      const d=document.createElement("div"); d.className="noprice";
+      d.textContent=p.note||"Χωρίς καταχωρημένες τιμές — ψάξε online ή πρόσθεσε τιμή.";
+      card.appendChild(d);
+    }
+    const act=document.createElement("div"); act.className="actions";
+    const add=document.createElement("button"); add.className="btn sm"; add.textContent="🛒 Στη λίστα";
+    add.onclick=()=>{ addToCart(p.id); toast(p.name+" προστέθηκε στη λίστα"); };
+    act.appendChild(add);
+    if((p.history||[]).length){
+      const hb=document.createElement("button"); hb.className="btn ghost sm"; hb.textContent="📈 Ιστορικό";
+      hb.onclick=()=>{ const ex=card.querySelector(".histbox"); if(ex){ex.remove();return;} card.appendChild(historyBox(p)); };
+      act.appendChild(hb);
+    }
+    card.appendChild(act);
+    card.appendChild(onlineLinks(p.name));
+    return card;
+  }
+  function historyBox(p){
+    const box=document.createElement("div"); box.className="histbox";
+    const h=(p.history||[]).slice().reverse();
+    box.innerHTML="<div class='muted' style='margin-bottom:4px'>Ιστορικό αλλαγών τιμής</div>";
+    h.forEach(e=>{
+      const st=storeById(e.sid); const d=e.from!=null?(e.v-e.from):0;
+      const arrow=e.from==null?"":(d<0?`<span class="trend down">▼</span>`:`<span class="trend up">▲</span>`);
+      const row=document.createElement("div"); row.className="h";
+      row.innerHTML=`<span>${e.t} · ${st?st.short:e.sid}</span>
+        <span>${e.from!=null?euro(e.from)+" → ":""}<b>${euro(e.v)}</b> ${arrow}</span>`;
+      box.appendChild(row);
+    });
+    return box;
+  }
+  $("#search").addEventListener("input",renderProducts);
+  $("#clearSearch").addEventListener("click",()=>{$("#search").value="";activeCat="";renderCatFilters();renderProducts();});
+
+  /* ---- Checklists ---- */
+  function renderChecklists(){
+    const box=$("#checklists"); box.innerHTML="";
+    SEED.checklists.forEach(cl=>{
+      const done=cl.items.filter((_,i)=>state.checked[cl.id+"::"+i]).length;
+      const det=document.createElement("details"); det.className="cl";
+      det.innerHTML=`<summary>${cl.icon} ${cl.name}<span class="count">${done}/${cl.items.length}</span></summary>`;
+      const items=document.createElement("div"); items.className="items";
+      cl.items.forEach((it,i)=>{
+        const key=cl.id+"::"+i; const isDone=!!state.checked[key];
+        const row=document.createElement("div"); row.className="clitem"+(isDone?" done":"");
+        const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=isDone;
+        cb.onchange=()=>{ if(cb.checked)state.checked[key]=true; else delete state.checked[key]; save(); renderChecklists(); };
+        const nm=document.createElement("span"); nm.className="nm"; nm.textContent=it.n;
+        row.appendChild(cb); row.appendChild(nm);
+        const btn=document.createElement("button"); btn.className="btn ghost sm";
+        if(it.pid&&prodById(it.pid)){ btn.textContent="🛒"; btn.title="Στη λίστα αγορών";
+          btn.onclick=()=>{addToCart(it.pid);toast(it.n+" στη λίστα");}; }
+        else{ btn.textContent="🔎"; btn.title="Ψάξε online";
+          btn.onclick=()=>window.open("https://www.skroutz.gr/search?keyphrase="+encodeURIComponent(it.n),"_blank"); }
+        row.appendChild(btn); items.appendChild(row);
+      });
+      det.appendChild(items); box.appendChild(det);
+    });
+  }
+
+  /* ---- Λίστα αγορών ---- */
+  function addToCart(pid,qty=1){ state.cart[pid]=(state.cart[pid]||0)+qty; save(); updateCartBadge(); }
+  function updateCartBadge(){
+    const n=Object.values(state.cart).reduce((a,b)=>a+b,0);
+    $("#cartBadge").textContent=n; $("#cartBadge").style.display=n?"inline-block":"none";
+  }
+  function renderCart(){
+    const box=$("#cartList"); box.innerHTML="";
+    const ids=Object.keys(state.cart);
+    if(!ids.length){ box.innerHTML='<div class="empty">Η λίστα είναι άδεια.<br>Πρόσθεσε προϊόντα από την «Σύγκριση» ή τις λίστες νοικοκυριού.</div>'; $("#cartTotals").innerHTML=""; return; }
+    const ul=document.createElement("ul"); ul.className="slist";
+    ids.forEach(pid=>{
+      const p=prodById(pid); if(!p){delete state.cart[pid];return;}
+      const best=bestPrice(p); const qty=state.cart[pid];
+      const li=document.createElement("li");
+      const nm=document.createElement("span"); nm.className="nm";
+      nm.innerHTML=`${p.name}<div class="perunit">${best?("καλύτ.: "+euro(best.v)+" @ "+(storeById(best.sid)?.short||best.sid)):"χωρίς τιμή"}</div>`;
+      const qi=document.createElement("input"); qi.type="number"; qi.min="1"; qi.value=qty; qi.className="qty"; qi.inputMode="numeric";
+      qi.onchange=()=>{ state.cart[pid]=Math.max(1,+qi.value||1); save(); renderCart(); };
+      const pr=document.createElement("span"); pr.className="price"; pr.textContent=best?euro(best.v*qty):"—";
+      const del=document.createElement("button"); del.className="btn ghost sm"; del.textContent="✕";
+      del.onclick=()=>{ delete state.cart[pid]; save(); updateCartBadge(); renderCart(); };
+      li.appendChild(nm); li.appendChild(qi); li.appendChild(pr); li.appendChild(del);
+      ul.appendChild(li);
+    });
+    box.appendChild(ul); save(); updateCartBadge(); renderCartTotals();
+  }
+  function renderCartTotals(){
+    const box=$("#cartTotals"); box.innerHTML="";
+    const totals={}; let bestMixTotal=0; let anyMissing=false;
+    state.stores.forEach(s=>totals[s.id]=0);
+    Object.entries(state.cart).forEach(([pid,qty])=>{
+      const p=prodById(pid); if(!p) return;
+      const best=bestPrice(p);
+      if(best) bestMixTotal+=best.v*qty; else anyMissing=true;
+      state.stores.forEach(s=>{ const v=p.prices?.[s.id];
+        totals[s.id]+=(v!=null&&!isNaN(v))?v*qty:(best?best.v*qty:0); });
+    });
+    const valid=state.stores.map(s=>({s,v:totals[s.id]})).filter(x=>x.v>0);
+    const min=valid.length?Math.min(...valid.map(x=>x.v)):null;
+    const smart=document.createElement("div"); smart.className="tot best";
+    smart.innerHTML=`<div class="s">🏆 Έξυπνο καλάθι (καλύτερη τιμή/προϊόν)</div><div class="v">${euro(bestMixTotal)}</div>`;
+    box.appendChild(smart);
+    state.stores.forEach(s=>{ const v=totals[s.id]; if(v<=0)return;
+      const d=document.createElement("div"); d.className="tot"+(v===min?" best":"");
+      d.innerHTML=`<div class="s">${s.name}</div><div class="v">${euro(v)}</div>`; box.appendChild(d);
+    });
+    if(anyMissing){ const h=document.createElement("div"); h.className="hint"; h.style.gridColumn="1/-1";
+      h.textContent="ℹ️ Κάποια προϊόντα δεν έχουν τιμές — δεν μετρήθηκαν στα σύνολα. Πρόσθεσε τιμές ή ψάξε online."; box.appendChild(h); }
+  }
+  $("#clearCart").addEventListener("click",()=>{ if(confirm("Καθαρισμός όλης της λίστας αγορών;")){ state.cart={}; save(); updateCartBadge(); renderCart(); }});
+  $("#printCart").addEventListener("click",()=>window.print());
+
+  /* ---- Σάρωση / Γρήγορη καταχώρηση ---- */
+  let scanLog=[];
+  function initScanTab(){
+    const st=$("#qeStore");
+    if(!st.dataset.filled){ state.stores.forEach(s=>{ const o=document.createElement("option"); o.value=s.id; o.textContent=s.name; st.appendChild(o); }); st.dataset.filled="1"; }
+    const dl=$("#qeProdList"); dl.innerHTML="";
+    state.products.forEach(p=>{ const o=document.createElement("option"); o.value=p.name; dl.appendChild(o); });
+  }
+  function setScanStatus(msg){ $("#scanStatus").innerHTML=msg; }
+  $("#btnBarcode").addEventListener("click",()=>$("#fileBarcode").click());
+  $("#btnReceipt").addEventListener("click",()=>$("#fileReceipt").click());
+  $("#fileReceipt").addEventListener("change",e=>{
+    const f=e.target.files[0]; if(!f)return;
+    const img=$("#receiptPreview"); img.src=URL.createObjectURL(f); img.style.display="block";
+    setScanStatus("🧾 Διάβασε την τιμή από την απόδειξη και καταχώρησέ την παρακάτω.");
+    e.target.value="";
+  });
+  const BARCODE_FORMATS=["ean_13","ean_8","upc_a","upc_e","code_128","code_39"];
+  async function resolveBarcode(barcode){
+    $("#qeBarcodeInfo").textContent="Barcode: "+barcode;
+    $("#qeBarcodeInfo").dataset.bc=barcode;
+    const known=prodByBarcode(barcode);
+    if(known){ $("#qeProd").value=known.name; setScanStatus("✅ Βρέθηκε: <b>"+known.name+"</b>. Διάλεξε κατάστημα & τιμή."); return; }
+    setScanStatus("🔎 Αναζήτηση ονόματος online (Open Food Facts)…");
+    try{
+      const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),6000);
+      const r=await fetch("https://world.openfoodfacts.org/api/v0/product/"+encodeURIComponent(barcode)+".json",{signal:ctrl.signal});
+      clearTimeout(to); const j=await r.json();
+      if(j.status===1){
+        const nm=j.product.product_name_el||j.product.product_name||j.product.generic_name||"";
+        if(nm){ $("#qeProd").value=nm; setScanStatus("✅ Βρέθηκε online: <b>"+nm+"</b>. Θα αποθηκευτεί με το barcode. Διάλεξε κατάστημα & τιμή."); $("#qePrice").focus(); return; }
+      }
+      setScanStatus("ℹ️ Δεν βρέθηκε όνομα online (barcode "+barcode+"). Γράψε το όνομα χειροκίνητα — θα αποθηκευτεί με το barcode.");
+    }catch(err){
+      setScanStatus("ℹ️ Χωρίς σύνδεση/αποτέλεσμα online. Γράψε το όνομα χειροκίνητα — θα αποθηκευτεί με το barcode "+barcode+".");
+    }
+  }
+  // Φωτο barcode (still image)
+  $("#fileBarcode").addEventListener("change",async e=>{
+    const f=e.target.files[0]; if(!f)return; e.target.value="";
+    setScanStatus("⏳ Ανάλυση barcode…");
+    if(!("BarcodeDetector" in window)){
+      setScanStatus("⚠️ Ο browser δεν υποστηρίζει ανάγνωση barcode (π.χ. iPhone/Safari). Πληκτρολόγησε το προϊόν χειροκίνητα παρακάτω.");
+      return;
+    }
+    try{
+      const bmp=await createImageBitmap(f);
+      const det=new BarcodeDetector({formats:BARCODE_FORMATS});
+      const codes=await det.detect(bmp);
+      if(!codes.length){ setScanStatus("❌ Δεν εντοπίστηκε barcode στη φωτο. Δοκίμασε ξανά πιο κοντά/σταθερά."); return; }
+      await resolveBarcode(codes[0].rawValue);
+    }catch(err){ setScanStatus("❌ Σφάλμα σάρωσης: "+err.message); }
+  });
+  // Ζωντανή σάρωση (κάμερα)
+  let mediaStream=null, scanRAF=null, liveDet=null;
+  function closeLiveScanner(){
+    if(scanRAF){cancelAnimationFrame(scanRAF);scanRAF=null;}
+    if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null;}
+    $("#scanOverlay").classList.remove("on");
+    const v=$("#scanVideo"); try{v.pause();}catch(e){} v.srcObject=null;
+  }
+  async function openLiveScanner(){
+    if(!("BarcodeDetector" in window)){
+      setScanStatus("⚠️ Ο browser δεν υποστηρίζει ζωντανή σάρωση (π.χ. iPhone/Safari). Άνοιγμα κάμερας για φωτο…");
+      $("#fileBarcode").click(); return;
+    }
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      setScanStatus("⚠️ Δεν υπάρχει πρόσβαση κάμερας εδώ. Χρήση φωτογραφίας…");
+      $("#fileBarcode").click(); return;
+    }
+    let stream;
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}}); }
+    catch(err){ setScanStatus("⚠️ Δεν δόθηκε πρόσβαση στην κάμερα ("+err.name+"). Χρήση φωτογραφίας…"); $("#fileBarcode").click(); return; }
+    mediaStream=stream;
+    const v=$("#scanVideo"); v.srcObject=stream; $("#scanOverlay").classList.add("on");
+    try{ await v.play(); }catch(e){}
+    liveDet=new BarcodeDetector({formats:BARCODE_FORMATS});
+    const tick=async ()=>{
+      if(!mediaStream) return;
+      try{ const codes=await liveDet.detect(v);
+        if(codes && codes.length){ const bc=codes[0].rawValue; closeLiveScanner(); setScanStatus("✅ Σαρώθηκε: "+bc); await resolveBarcode(bc); return; }
+      }catch(e){}
+      scanRAF=requestAnimationFrame(tick);
+    };
+    scanRAF=requestAnimationFrame(tick);
+  }
+  $("#btnLiveScan").addEventListener("click",openLiveScanner);
+  $("#scanClose").addEventListener("click",()=>{ closeLiveScanner(); setScanStatus("Σάρωση ακυρώθηκε."); });
+  $("#qeSave").addEventListener("click",()=>{
+    const name=$("#qeProd").value.trim();
+    const sid=$("#qeStore").value;
+    const price=parseFloat($("#qePrice").value);
+    if(!name){ toast("Γράψε ή διάλεξε προϊόν"); return; }
+    if(isNaN(price)||price<=0){ toast("Γράψε έγκυρη τιμή"); return; }
+    const bc=$("#qeBarcodeInfo").dataset.bc||"";
+    let p=state.products.find(x=>x.name.toLowerCase()===name.toLowerCase());
+    if(!p && bc) p=prodByBarcode(bc);
+    if(!p){
+      p={ id:"p_"+Date.now(), name, cat:"t_bakalis", unit:"τεμ", size:1, prices:{}, history:[] };
+      if(bc) p.barcode=bc; state.products.push(p);
+    } else if(bc && !p.barcode){ p.barcode=bc; }
+    recordPrice(p,sid,price); save();
+    const stName=storeById(sid)?.short||sid;
+    scanLog.unshift({name:p.name,store:stName,price,t:new Date().toLocaleTimeString("el-GR",{hour:"2-digit",minute:"2-digit"})});
+    renderScanLog();
+    $("#qePrice").value=""; $("#qeBarcodeInfo").textContent=""; delete $("#qeBarcodeInfo").dataset.bc;
+    initScanTab(); renderProducts(); renderCatFilters();
+    toast("✔ "+p.name+" @ "+stName+": "+euro(price));
+  });
+  function renderScanLog(){
+    const box=$("#scanLog"); box.innerHTML="";
+    if(!scanLog.length) return;
+    const h=document.createElement("div"); h.className="muted"; h.style.cssText="font-size:12px;margin:6px 0"; h.textContent="Καταχωρήθηκαν:";
+    box.appendChild(h);
+    scanLog.slice(0,12).forEach(e=>{
+      const d=document.createElement("div"); d.className="e";
+      d.innerHTML=`<span>${e.name} · <span class="muted">${e.store}</span></span><b>${euro(e.price)} <span class="muted">${e.t}</span></b>`;
+      box.appendChild(d);
+    });
+  }
+
+  /* ---- Editor ---- */
+  function renderEditor(){
+    const catSel=$("#edCat");
+    if(!catSel.dataset.filled){
+      SEED.categories.forEach(c=>{ const o=document.createElement("option"); o.value=c.id; o.textContent=c.icon+" "+c.name; catSel.appendChild(o); });
+      catSel.dataset.filled="1";
+    }
+    const fSel=$("#edFilter");
+    if(!fSel.dataset.filled){
+      const all=document.createElement("option"); all.value=""; all.textContent="Όλες οι κατηγορίες"; fSel.appendChild(all);
+      SEED.categories.forEach(c=>{ const o=document.createElement("option"); o.value=c.id; o.textContent=c.icon+" "+c.name; fSel.appendChild(o); });
+      fSel.dataset.filled="1";
+    }
+    const q=$("#edSearch").value.trim().toLowerCase();
+    const wrap=$("#editorTable"); wrap.innerHTML="";
+    const t=document.createElement("table"); t.className="tbl";
+    let head="<tr><th class='pn'>Προϊόν</th><th>Μέγεθος</th>";
+    state.stores.forEach(s=>head+=`<th>${s.short}</th>`); head+="<th></th></tr>";
+    t.innerHTML="<thead>"+head+"</thead>";
+    const tb=document.createElement("tbody");
+    let list=state.products;
+    if(fSel.value) list=list.filter(p=>p.cat===fSel.value);
+    if(q) list=list.filter(p=>p.name.toLowerCase().includes(q));
+    list.forEach(p=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td class="pn">${p.name}<div class="perunit">${catById(p.cat)?.name||""}${p.barcode?" · "+p.barcode:""}</div></td>
+        <td>${p.size||""} ${p.unit||""}</td>`;
+      state.stores.forEach(s=>{
+        const td=document.createElement("td");
+        const inp=document.createElement("input"); inp.type="number"; inp.step="0.01"; inp.min="0"; inp.inputMode="decimal";
+        inp.value=p.prices?.[s.id]!=null?p.prices[s.id]:""; inp.placeholder="—";
+        inp.onchange=()=>{ recordPrice(p,s.id,inp.value===""?"":inp.value); save(); toast("Αποθηκεύτηκε"); };
+        td.appendChild(inp); tr.appendChild(td);
+      });
+      const tdDel=document.createElement("td");
+      const del=document.createElement("button"); del.className="btn ghost sm"; del.textContent="🗑"; del.title="Διαγραφή";
+      del.onclick=()=>{ if(confirm("Διαγραφή «"+p.name+"»;")){ state.products=state.products.filter(x=>x.id!==p.id); delete state.cart[p.id]; save(); renderEditor(); renderProducts(); renderCatFilters(); }};
+      tdDel.appendChild(del); tr.appendChild(tdDel);
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); wrap.appendChild(t);
+  }
+  $("#edFilter").addEventListener("change",renderEditor);
+  $("#edSearch").addEventListener("input",renderEditor);
+  $("#addProduct").addEventListener("click",()=>{
+    const name=$("#edName").value.trim(); if(!name){toast("Δώσε όνομα προϊόντος");return;}
+    state.products.push({ id:"p_"+Date.now(), name, cat:$("#edCat").value||"t_bakalis",
+      unit:$("#edUnit").value.trim()||"τεμ", size:+$("#edSize").value||1, prices:{}, history:[] });
+    save(); $("#edName").value=""; $("#edSize").value="";
+    renderEditor(); renderProducts(); renderCatFilters(); toast("Προστέθηκε «"+name+"»");
+  });
+
+  /* ---- Import / Export ---- */
+  $("#exportBtn").addEventListener("click",()=>{
+    const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+    const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+    a.download="agores360-backup-"+today()+".json"; a.click(); toast("Εξήχθη backup");
+  });
+  $("#importFile").addEventListener("change",e=>{
+    const f=e.target.files[0]; if(!f)return; const r=new FileReader();
+    r.onload=()=>{ try{ const d=JSON.parse(r.result);
+      if(d.products&&d.stores){ state=d; state.cart=state.cart||{}; state.checked=state.checked||{};
+        state.products.forEach(p=>{p.history=p.history||[];p.prices=p.prices||{};}); save(); boot(); toast("Εισήχθη επιτυχώς"); }
+      else toast("Μη έγκυρο αρχείο");
+    }catch(err){toast("Σφάλμα ανάγνωσης");} }; r.readAsText(f); e.target.value="";
+  });
+  $("#resetBtn").addEventListener("click",()=>{
+    if(confirm("Επαναφορά στα αρχικά δεδομένα; Θα χαθούν οι δικές σου αλλαγές & ιστορικό.")){
+      localStorage.removeItem(LS); state=load(); boot(); toast("Έγινε επαναφορά");
+    }
+  });
+
+  let toastT;
+  function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show");
+    clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2200); }
+
+  function boot(){
+    renderCatFilters(); renderProducts(); renderChecklists(); updateCartBadge();
+    if($("#cart").classList.contains("active")) renderCart();
+    if($("#editor").classList.contains("active")) renderEditor();
+    if($("#scan").classList.contains("active")) initScanTab();
+  }
+  boot();
+
+  /* ---- PWA: service worker + εγκατάσταση ---- */
+  if("serviceWorker" in navigator && location.protocol.indexOf("http")===0){
+    navigator.serviceWorker.register("sw.js").catch(()=>{});
+  }
+  let deferredPrompt=null;
+  window.addEventListener("beforeinstallprompt",e=>{
+    e.preventDefault(); deferredPrompt=e;
+    const b=$("#installBtn"); if(b) b.style.display="block";
+  });
+  $("#installBtn").addEventListener("click",async()=>{
+    if(!deferredPrompt){ toast("Άνοιξε την εφαρμογή μέσω http(s) για εγκατάσταση"); return; }
+    deferredPrompt.prompt();
+    const r=await deferredPrompt.userChoice; deferredPrompt=null;
+    $("#installBtn").style.display="none";
+    toast(r.outcome==="accepted"?"✅ Εγκαταστάθηκε":"Ακυρώθηκε");
+  });
+  window.addEventListener("appinstalled",()=>{ toast("✅ Εγκαταστάθηκε στην αρχική οθόνη"); });
+})();
+</script>
+</body>
+</html>
