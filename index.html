@@ -126,6 +126,11 @@ h2.section{font-size:17px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1p
 .slist li.bought .nm{text-decoration:line-through}
 .favbtn{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px}
 .favbtn.on{color:var(--gold);border-color:var(--gold)}
+.offerbadge{display:inline-block;background:var(--gold);color:#1a1a1a;font-size:10px;font-weight:800;padding:1px 6px;border-radius:6px;margin-left:6px;letter-spacing:.3px}
+.waswas{color:var(--muted);text-decoration:line-through;font-size:12px;margin-right:2px}
+.card.hasoffer{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset, var(--shadow)}
+.offrow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;margin-bottom:8px;font-size:13px}
+.offrow.expired{opacity:.5;border-left-color:var(--muted)}
 .slist li .qty{width:60px;text-align:center}
 .slist .price{font-variant-numeric:tabular-nums;min-width:64px;text-align:right}
 .totals{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
@@ -202,6 +207,7 @@ h2.section{font-size:17px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1p
   <button class="active" data-view="compare">🔍 Σύγκριση</button>
   <button data-view="home">🏠 Τι χρειάζεται</button>
   <button data-view="cart">🛒 Λίστα<span class="badge-count" id="cartBadge" style="display:none">0</span></button>
+  <button data-view="offers">🔥 Προσφορές</button>
   <button data-view="scan">📷 Σάρωση</button>
   <button data-view="editor">💶 Βάση & Τιμές</button>
   <button data-view="about">ℹ️ Οδηγίες</button>
@@ -227,13 +233,19 @@ h2.section{font-size:17px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1p
 
   <!-- ΛΙΣΤΑ -->
   <section id="cart" class="view">
-    <div class="row" style="justify-content:space-between;margin-bottom:10px">
-      <h2 class="section" style="margin:0;border:none">🛒 Η λίστα αγορών μου</h2>
+    <div class="row" style="justify-content:space-between;margin-bottom:10px;gap:8px">
+      <div class="row" style="gap:6px;flex:1;min-width:180px">
+        <span style="font-size:20px">🗂️</span>
+        <select id="listSelect" style="flex:1;min-width:120px"></select>
+        <button class="btn ghost sm" id="listNew" title="Νέα λίστα">➕</button>
+        <button class="btn ghost sm" id="listRename" title="Μετονομασία">✏️</button>
+        <button class="btn ghost sm" id="listDelete" title="Διαγραφή λίστας">🗑️</button>
+      </div>
       <div class="row">
         <button class="btn ghost sm" id="shareCart">📤 Κοινοποίηση</button>
         <button class="btn ghost sm" id="copyCart">📋 Αντιγραφή</button>
         <button class="btn ghost sm" id="printCart">🖨️</button>
-        <button class="btn ghost sm" id="clearCart">🗑️</button>
+        <button class="btn ghost sm" id="clearCart" title="Άδειασμα λίστας">🧹</button>
       </div>
     </div>
     <div id="cartProgress"></div>
@@ -256,6 +268,40 @@ h2.section{font-size:17px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1p
     </div>
     <h2 class="section">💶 Σύνολο κόστους ανά κατάστημα</h2>
     <div class="totals" id="cartTotals"></div>
+  </section>
+
+  <!-- ΠΡΟΣΦΟΡΕΣ / ΦΥΛΛΑΔΙΑ -->
+  <section id="offers" class="view">
+    <h2 class="section">🔥 Προσφορές & Φυλλάδια</h2>
+    <p class="hint">Καταχώρησε τιμές προσφοράς ανά κατάστημα (από φυλλάδιο/κατάστημα) με ημερομηνία λήξης. Οι προσφορές εμφανίζονται με 🔥 στη σύγκριση, μπαίνουν αυτόματα στο «έξυπνο καλάθι» και λήγουν μόνες τους.</p>
+    <div class="card" style="margin-bottom:14px">
+      <h3>➕ Νέα προσφορά</h3>
+      <div class="row" style="margin-top:10px;align-items:flex-end">
+        <div class="field" style="flex:2;min-width:180px">
+          <label>Προϊόν</label>
+          <input id="offProd" list="offProdList" placeholder="π.χ. Ελαιόλαδο έξτρα παρθένο" autocomplete="off">
+          <datalist id="offProdList"></datalist>
+        </div>
+        <div class="field" style="flex:1;min-width:130px">
+          <label>Κατάστημα</label>
+          <select id="offStore"></select>
+        </div>
+        <div class="field" style="width:110px">
+          <label>Τιμή προσφ. €</label>
+          <input id="offPrice" type="number" step="0.01" min="0" inputmode="decimal" placeholder="0.00">
+        </div>
+        <div class="field" style="width:150px">
+          <label>Ισχύει έως</label>
+          <input id="offUntil" type="date">
+        </div>
+        <button class="btn" id="offSave">✔ Καταχώρηση</button>
+      </div>
+    </div>
+    <div class="row" style="justify-content:space-between;margin-bottom:10px">
+      <b id="offCount"></b>
+      <button class="btn ghost sm" id="offClearExpired">🧹 Καθάρισε ληγμένες</button>
+    </div>
+    <div id="offList"></div>
   </section>
 
   <!-- ΣΑΡΩΣΗ / ΓΡΗΓΟΡΗ ΚΑΤΑΧΩΡΗΣΗ -->
@@ -729,37 +775,69 @@ window.SEED = {
   const $$=(s,el=document)=>[...el.querySelectorAll(s)];
   const euro=n=>(n==null||isNaN(n))?"—":n.toLocaleString("el-GR",{style:"currency",currency:"EUR"});
   const today=()=>new Date().toISOString().slice(0,10);
+  const dmy=s=>{ if(!s)return""; const a=s.split("-"); return a.length===3?a[2]+"/"+a[1]:s; };
 
   let state=load();
   function load(){
     let saved=null; try{ saved=JSON.parse(localStorage.getItem(LS)); }catch(e){}
     if(saved && saved.products){
-      saved.bought=saved.bought||{}; saved.favorites=saved.favorites||{};
-      if(saved.budget===undefined) saved.budget=null;
-      saved.cart=saved.cart||{}; saved.checked=saved.checked||{};
+      saved.favorites=saved.favorites||{}; saved.checked=saved.checked||{};
+      // migration → πολλαπλές λίστες
+      if(!saved.lists){
+        saved.lists=[{ id:"l_default", name:"Η λίστα μου",
+          cart:saved.cart||{}, bought:saved.bought||{},
+          budget:(saved.budget!==undefined?saved.budget:null) }];
+        saved.activeListId="l_default";
+      }
+      if(!saved.activeListId || !saved.lists.some(l=>l.id===saved.activeListId)) saved.activeListId=saved.lists[0].id;
+      delete saved.cart; delete saved.bought; delete saved.budget;
       // merge νέα καταστήματα/προϊόντα από το SEED — updates χωρίς απώλεια δεδομένων
       SEED.stores.forEach(s=>{ if(!saved.stores.some(x=>x.id===s.id)) saved.stores.push(JSON.parse(JSON.stringify(s))); });
       const have=new Set(saved.products.map(p=>p.id));
       SEED.products.forEach(p=>{ if(!have.has(p.id)) saved.products.push(JSON.parse(JSON.stringify(p))); });
-      saved.products.forEach(p=>{ p.history=p.history||[]; p.prices=p.prices||{}; });
+      saved.products.forEach(p=>{ p.history=p.history||[]; p.prices=p.prices||{}; p.offers=p.offers||{}; });
       return saved;
     }
     return {
       stores:JSON.parse(JSON.stringify(SEED.stores)),
       products:JSON.parse(JSON.stringify(SEED.products)),
-      cart:{}, checked:{}, bought:{}, favorites:{}, budget:null
+      checked:{}, favorites:{},
+      lists:[{ id:"l_default", name:"Η λίστα μου", cart:{}, bought:{}, budget:null }],
+      activeListId:"l_default"
     };
   }
   function save(){ try{ localStorage.setItem(LS,JSON.stringify(state)); }catch(e){} }
+  // ---- Ενεργή λίστα (πολλαπλές λίστες) ----
+  function activeList(){
+    let l=state.lists.find(x=>x.id===state.activeListId);
+    if(!l){ l=state.lists[0]; state.activeListId=l.id; }
+    l.cart=l.cart||{}; l.bought=l.bought||{}; if(l.budget===undefined)l.budget=null;
+    return l;
+  }
+  function useActiveList(){ const l=activeList(); state.cart=l.cart; state.bought=l.bought; state.budget=l.budget; }
+  // ---- Προσφορές ----
+  function activeOffer(p,sid){
+    const o=p.offers&&p.offers[sid];
+    if(!o||!(o.price>0)) return null;
+    if(o.until && o.until<today()) return null;
+    return o;
+  }
   const catById=id=>SEED.categories.find(c=>c.id===id);
   const storeById=id=>state.stores.find(s=>s.id===id)||SEED.stores.find(s=>s.id===id);
   const prodById=id=>state.products.find(p=>p.id===id);
   const prodByBarcode=bc=>state.products.find(p=>p.barcode&&p.barcode===bc);
 
   function priceEntries(p){
-    return Object.entries(p.prices||{}).filter(([k,v])=>v!=null&&!isNaN(v)&&v>0)
-      .map(([sid,v])=>({sid,v:+v})).sort((a,b)=>a.v-b.v);
+    const sids=new Set([...Object.keys(p.prices||{}), ...Object.keys(p.offers||{})]);
+    const arr=[];
+    sids.forEach(sid=>{
+      const base=p.prices?.[sid]; const off=activeOffer(p,sid);
+      if(off){ arr.push({sid, v:+off.price, offer:true, was:(base!=null&&!isNaN(base)&&base>0)?+base:null, until:off.until||null}); }
+      else if(base!=null&&!isNaN(base)&&base>0){ arr.push({sid, v:+base, offer:false, was:null}); }
+    });
+    return arr.sort((a,b)=>a.v-b.v);
   }
+  function hasActiveOffer(p){ return Object.keys(p.offers||{}).some(sid=>activeOffer(p,sid)); }
   function bestPrice(p){ const e=priceEntries(p); return e.length?e[0]:null; }
   function perUnit(p,price){
     if(!p.size||!p.unit) return null;
@@ -806,6 +884,7 @@ window.SEED = {
     if(b.dataset.view==="cart") renderCart();
     if(b.dataset.view==="editor") renderEditor();
     if(b.dataset.view==="scan") initScanTab();
+    if(b.dataset.view==="offers") initOffersTab();
     window.scrollTo(0,0);
   }));
 
@@ -822,6 +901,12 @@ window.SEED = {
       f.textContent="⭐ Αγαπημένα ("+favN+")"; f.onclick=()=>{activeCat="__fav";renderCatFilters();renderProducts();};
       box.appendChild(f);
     }
+    const offN=state.products.filter(hasActiveOffer).length;
+    if(offN){
+      const o=document.createElement("button"); o.className="chip"+(activeCat==="__offers"?" active":""); o.style.borderColor="var(--gold)";
+      o.textContent="🔥 Προσφορές ("+offN+")"; o.onclick=()=>{activeCat="__offers";renderCatFilters();renderProducts();};
+      box.appendChild(o);
+    }
     SEED.categories.forEach(c=>{
       if(!state.products.some(p=>p.cat===c.id)) return;
       const b=document.createElement("button"); b.className="chip"+(activeCat===c.id?" active":"");
@@ -835,6 +920,7 @@ window.SEED = {
     const grid=$("#prodGrid"); grid.innerHTML="";
     let list=state.products.filter(p=>{
       if(activeCat==="__fav"){ if(!state.favorites[p.id]) return false; }
+      else if(activeCat==="__offers"){ if(!hasActiveOffer(p)) return false; }
       else if(activeCat&&p.cat!==activeCat) return false;
       if(q&&!(p.name.toLowerCase().includes(q)||(catById(p.cat)?.name.toLowerCase().includes(q)))) return false;
       return true;
@@ -846,7 +932,7 @@ window.SEED = {
   }
   function productCard(p){
     const c=catById(p.cat); const best=bestPrice(p); const entries=priceEntries(p);
-    const card=document.createElement("div"); card.className="card";
+    const card=document.createElement("div"); card.className="card"+(hasActiveOffer(p)?" hasoffer":"");
     card.innerHTML=`<h3>${p.name}</h3><div class="cat">${c?c.icon:""} ${c?c.name:""}
       ${p.size&&p.unit?`<span class="muted">· ${p.size} ${p.unit}</span>`:""}</div>`;
     if(entries.length){
@@ -856,8 +942,10 @@ window.SEED = {
         const tr=document.createElement("tr"); if(isBest) tr.className="best";
         const tr2=lastTrend(p,e.sid);
         const trendHtml=tr2?`<span class="trend ${tr2.dir}">${tr2.dir==="down"?"▼":"▲"} ${euro(Math.abs(tr2.d))}</span>`:"";
-        tr.innerHTML=`<td>${st?st.name:e.sid}${isBest?'<span class="badge">καλύτερη</span>':""}</td>
-          <td>${euro(e.v)}${trendHtml}<div class="perunit">${perUnit(p,e.v)||""}</div></td>`;
+        const offerBadge=e.offer?`<span class="offerbadge">🔥 ΠΡΟΣΦΟΡΑ${e.until?" έως "+dmy(e.until):""}</span>`:"";
+        const wasHtml=e.offer&&e.was!=null?`<span class="waswas">${euro(e.was)}</span> `:"";
+        tr.innerHTML=`<td>${st?st.name:e.sid}${isBest?'<span class="badge">καλύτερη</span>':""}${offerBadge}</td>
+          <td>${wasHtml}${euro(e.v)}${trendHtml}<div class="perunit">${perUnit(p,e.v)||""}</div></td>`;
         t.appendChild(tr);
       });
       card.appendChild(t);
@@ -934,7 +1022,25 @@ window.SEED = {
     const n=Object.values(state.cart).reduce((a,b)=>a+b,0);
     $("#cartBadge").textContent=n; $("#cartBadge").style.display=n?"inline-block":"none";
   }
+  // ---- Πολλαπλές λίστες ----
+  function renderListSelector(){
+    const sel=$("#listSelect"); sel.innerHTML="";
+    state.lists.forEach(l=>{ const o=document.createElement("option"); o.value=l.id;
+      const cnt=Object.keys(l.cart||{}).length; o.textContent=l.name+(cnt?(" ("+cnt+")"):""); sel.appendChild(o); });
+    sel.value=state.activeListId;
+    $("#listDelete").style.display = state.lists.length>1 ? "" : "none";
+  }
+  $("#listSelect").addEventListener("change",()=>{ state.activeListId=$("#listSelect").value; useActiveList(); save(); renderCart(); });
+  $("#listNew").addEventListener("click",()=>{ const name=prompt("Όνομα νέας λίστας:","Εβδομαδιαία"); if(name===null)return;
+    const id="l_"+Date.now(); state.lists.push({id,name:(name.trim()||"Νέα λίστα"),cart:{},bought:{},budget:null});
+    state.activeListId=id; useActiveList(); save(); renderCart(); toast("🗂️ Δημιουργήθηκε: "+(name.trim()||"Νέα λίστα")); });
+  $("#listRename").addEventListener("click",()=>{ const l=activeList(); const name=prompt("Νέο όνομα λίστας:",l.name);
+    if(name&&name.trim()){ l.name=name.trim(); save(); renderCart(); } });
+  $("#listDelete").addEventListener("click",()=>{ if(state.lists.length<=1){toast("Πρέπει να υπάρχει ≥1 λίστα");return;}
+    const l=activeList(); if(!confirm("Διαγραφή λίστας «"+l.name+"»; (τα προϊόντα της θα χαθούν)"))return;
+    state.lists=state.lists.filter(x=>x.id!==l.id); state.activeListId=state.lists[0].id; useActiveList(); save(); renderCart(); toast("Διαγράφηκε η λίστα"); });
   function renderCart(){
+    useActiveList(); renderListSelector();
     const box=$("#cartList"); box.innerHTML="";
     const ids=Object.keys(state.cart);
     if(!ids.length){
@@ -1013,7 +1119,7 @@ window.SEED = {
         : `⚠️ Ξεπερνάς κατά <b style="color:var(--red2)">${euro(-diff)}</b> <span class="muted">(έξυπνο καλάθι: ${euro(ref)})</span>`;
     } else wrap.style.display="none";
   }
-  $("#budgetInput").addEventListener("input",()=>{ const v=parseFloat($("#budgetInput").value); state.budget=isNaN(v)?null:v; save(); renderCartTotals(); });
+  $("#budgetInput").addEventListener("input",()=>{ const v=parseFloat($("#budgetInput").value); state.budget=isNaN(v)?null:v; activeList().budget=state.budget; save(); renderCartTotals(); });
   function cartText(){
     const ids=Object.keys(state.cart); if(!ids.length) return "";
     const lines=["🛒 Λίστα αγορών (ΑΓΟΡΕΣ 360°):"]; let smart=0;
@@ -1027,8 +1133,51 @@ window.SEED = {
     else { try{ await navigator.clipboard.writeText(t); toast("📋 Αντιγράφηκε (χωρίς κοινοποίηση στη συσκευή)"); }catch(e){ toast("Αδυναμία κοινοποίησης"); } } });
   $("#copyCart").addEventListener("click",async()=>{ const t=cartText(); if(!t){toast("Η λίστα είναι άδεια");return;}
     try{ await navigator.clipboard.writeText(t); toast("📋 Αντιγράφηκε η λίστα"); }catch(e){ toast("Αδυναμία αντιγραφής"); } });
-  $("#clearCart").addEventListener("click",()=>{ if(confirm("Καθαρισμός όλης της λίστας αγορών;")){ state.cart={}; state.bought={}; save(); updateCartBadge(); renderCart(); }});
+  $("#clearCart").addEventListener("click",()=>{ if(confirm("Άδειασμα της λίστας «"+activeList().name+"»;")){ const l=activeList(); l.cart={}; l.bought={}; useActiveList(); save(); updateCartBadge(); renderCart(); }});
   $("#printCart").addEventListener("click",()=>window.print());
+
+  /* ---- Προσφορές / Φυλλάδια ---- */
+  function initOffersTab(){
+    const st=$("#offStore");
+    if(!st.dataset.filled){ state.stores.forEach(s=>{ const o=document.createElement("option"); o.value=s.id; o.textContent=s.name; st.appendChild(o); }); st.dataset.filled="1"; }
+    const dl=$("#offProdList"); dl.innerHTML="";
+    state.products.forEach(p=>{ const o=document.createElement("option"); o.value=p.name; dl.appendChild(o); });
+    renderOffersList();
+  }
+  function renderOffersList(){
+    const box=$("#offList"); box.innerHTML="";
+    const rows=[];
+    state.products.forEach(p=>{ Object.entries(p.offers||{}).forEach(([sid,o])=>{ if(o&&o.price>0) rows.push({p,sid,o}); }); });
+    rows.sort((a,b)=>(a.o.until||"9999").localeCompare(b.o.until||"9999"));
+    const active=rows.filter(r=>!r.o.until||r.o.until>=today()).length;
+    $("#offCount").textContent = rows.length? (active+" ενεργές προσφορές"+(rows.length>active?(" · "+(rows.length-active)+" ληγμένες"):"")) : "Καμία προσφορά ακόμη";
+    if(!rows.length){ box.innerHTML='<div class="empty">Δεν υπάρχουν προσφορές.<br>Πρόσθεσε μία από πάνω — π.χ. από φυλλάδιο σούπερ μάρκετ.</div>'; return; }
+    rows.forEach(({p,sid,o})=>{
+      const expired=o.until&&o.until<today();
+      const base=p.prices?.[sid];
+      const row=document.createElement("div"); row.className="offrow"+(expired?" expired":"");
+      row.innerHTML=`<span style="flex:1">🔥 <b>${p.name}</b><div class="perunit">${storeById(sid)?.name||sid} · ${base!=null?"<s>"+euro(base)+"</s> → ":""}<b style="color:var(--gold)">${euro(o.price)}</b>${o.until?" · έως "+dmy(o.until)+(expired?" (έληξε)":""):""}</div></span>`;
+      const del=document.createElement("button"); del.className="btn ghost sm"; del.textContent="✕";
+      del.onclick=()=>{ delete p.offers[sid]; save(); renderOffersList(); renderProducts(); renderCatFilters(); };
+      row.appendChild(del); box.appendChild(row);
+    });
+  }
+  $("#offSave").addEventListener("click",()=>{
+    const name=$("#offProd").value.trim(); const sid=$("#offStore").value;
+    const price=parseFloat($("#offPrice").value); const until=$("#offUntil").value||"";
+    if(!name){ toast("Διάλεξε προϊόν"); return; }
+    if(isNaN(price)||price<=0){ toast("Γράψε έγκυρη τιμή προσφοράς"); return; }
+    const p=state.products.find(x=>x.name.toLowerCase()===name.toLowerCase());
+    if(!p){ toast("Το προϊόν δεν βρέθηκε — πρόσθεσέ το πρώτα στη «Βάση & Τιμές»"); return; }
+    p.offers=p.offers||{}; p.offers[sid]={price, until};
+    save(); $("#offProd").value=""; $("#offPrice").value=""; $("#offUntil").value="";
+    renderOffersList(); renderProducts(); renderCatFilters();
+    toast("🔥 Προσφορά: "+p.name+" @ "+(storeById(sid)?.short||sid)+" "+euro(price));
+  });
+  $("#offClearExpired").addEventListener("click",()=>{
+    let n=0; state.products.forEach(p=>{ Object.entries(p.offers||{}).forEach(([sid,o])=>{ if(o.until&&o.until<today()){ delete p.offers[sid]; n++; } }); });
+    save(); renderOffersList(); renderProducts(); renderCatFilters(); toast(n?("Διαγράφηκαν "+n+" ληγμένες"):"Δεν υπάρχουν ληγμένες");
+  });
 
   /* ---- Σάρωση / Γρήγορη καταχώρηση ---- */
   let scanLog=[];
@@ -1187,7 +1336,7 @@ window.SEED = {
       });
       const tdDel=document.createElement("td");
       const del=document.createElement("button"); del.className="btn ghost sm"; del.textContent="🗑"; del.title="Διαγραφή";
-      del.onclick=()=>{ if(confirm("Διαγραφή «"+p.name+"»;")){ state.products=state.products.filter(x=>x.id!==p.id); delete state.cart[p.id]; save(); renderEditor(); renderProducts(); renderCatFilters(); }};
+      del.onclick=()=>{ if(confirm("Διαγραφή «"+p.name+"»;")){ state.products=state.products.filter(x=>x.id!==p.id); state.lists.forEach(l=>{delete l.cart[p.id];delete l.bought[p.id];}); delete state.favorites[p.id]; save(); renderEditor(); renderProducts(); renderCatFilters(); }};
       tdDel.appendChild(del); tr.appendChild(tdDel);
       tb.appendChild(tr);
     });
@@ -1212,9 +1361,11 @@ window.SEED = {
   $("#importFile").addEventListener("change",e=>{
     const f=e.target.files[0]; if(!f)return; const r=new FileReader();
     r.onload=()=>{ try{ const d=JSON.parse(r.result);
-      if(d.products&&d.stores){ state=d; state.cart=state.cart||{}; state.checked=state.checked||{};
-        state.bought=state.bought||{}; state.favorites=state.favorites||{}; if(state.budget===undefined)state.budget=null;
-        state.products.forEach(p=>{p.history=p.history||[];p.prices=p.prices||{};}); save(); boot(); toast("Εισήχθη επιτυχώς"); }
+      if(d.products&&d.stores){ state=d; state.checked=state.checked||{}; state.favorites=state.favorites||{};
+        if(!state.lists){ state.lists=[{id:"l_default",name:"Η λίστα μου",cart:state.cart||{},bought:state.bought||{},budget:(state.budget!==undefined?state.budget:null)}]; state.activeListId="l_default"; }
+        if(!state.activeListId||!state.lists.some(l=>l.id===state.activeListId)) state.activeListId=state.lists[0].id;
+        delete state.cart; delete state.bought; delete state.budget;
+        state.products.forEach(p=>{p.history=p.history||[];p.prices=p.prices||{};p.offers=p.offers||{};}); save(); boot(); toast("Εισήχθη επιτυχώς"); }
       else toast("Μη έγκυρο αρχείο");
     }catch(err){toast("Σφάλμα ανάγνωσης");} }; r.readAsText(f); e.target.value="";
   });
@@ -1229,10 +1380,12 @@ window.SEED = {
     clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2200); }
 
   function boot(){
+    useActiveList();
     renderCatFilters(); renderProducts(); renderChecklists(); updateCartBadge();
     if($("#cart").classList.contains("active")) renderCart();
     if($("#editor").classList.contains("active")) renderEditor();
     if($("#scan").classList.contains("active")) initScanTab();
+    if($("#offers").classList.contains("active")) initOffersTab();
   }
   boot();
 
