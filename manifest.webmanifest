@@ -5,8 +5,9 @@
   "lang": "el",
   "start_url": "./index.html",
   "scope": "./",
-  "display": "standalone",
-  "orientation": "portrait",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#0e0f13",
   "theme_color": "#e4002b",
   "icons": [
