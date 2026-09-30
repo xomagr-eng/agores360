@@ -1,5 +1,5 @@
-/* ΑΓΟΡΕΣ 360° — Service Worker (offline cache) */
-const CACHE = "agores360-v2";
+/* ΑΓΟΡΕΣ 360° — Service Worker (offline cache, auto-update) */
+const CACHE = "agores360-v4";
 const ASSETS = [
   "./",
   "./index.html",
@@ -19,15 +19,32 @@ self.addEventListener("activate", e => {
   );
 });
 
+self.addEventListener("message", e => { if (e.data === "skipWaiting") self.skipWaiting(); });
+
 self.addEventListener("fetch", e => {
-  const url = new URL(e.request.url);
-  // Μόνο τα δικά μας αρχεία από cache· τα εξωτερικά (π.χ. Open Food Facts) περνούν κανονικά στο δίκτυο.
+  const req = e.request;
+  const url = new URL(req.url);
+  // Εξωτερικά (π.χ. Open Food Facts) περνούν κανονικά στο δίκτυο.
   if (url.origin !== location.origin) return;
+
+  // Η σελίδα/πλοήγηση: NETWORK-FIRST ώστε να βλέπεις πάντα την τελευταία έκδοση όταν έχεις internet.
+  if (req.mode === "navigate" || req.destination === "document") {
+    e.respondWith(
+      fetch(req).then(resp => {
+        const copy = resp.clone();
+        caches.open(CACHE).then(c => c.put("./index.html", copy));
+        return resp;
+      }).catch(() => caches.match(req).then(r => r || caches.match("./index.html")))
+    );
+    return;
+  }
+
+  // Υπόλοιπα assets: cache-first με ανανέωση στο παρασκήνιο.
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).then(resp => {
+    caches.match(req).then(cached => cached || fetch(req).then(resp => {
       const copy = resp.clone();
-      caches.open(CACHE).then(c => c.put(e.request, copy));
+      caches.open(CACHE).then(c => c.put(req, copy));
       return resp;
-    }).catch(() => caches.match("./index.html")))
+    }).catch(() => cached))
   );
 });
