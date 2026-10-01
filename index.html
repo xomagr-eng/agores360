@@ -131,6 +131,15 @@ h2.section{font-size:17px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1p
 .card.hasoffer{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset, var(--shadow)}
 .offrow{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;margin-bottom:8px;font-size:13px}
 .offrow.expired{opacity:.5;border-left-color:var(--muted)}
+.offrow.soon{border-left-color:var(--warn)}
+.expsoon{display:inline-block;background:var(--warn);color:#1a1a1a;font-size:10px;font-weight:800;padding:1px 6px;border-radius:6px;margin-left:4px}
+.expbanner{background:rgba(255,176,32,.14);border:1px solid var(--warn);border-radius:12px;padding:12px 14px;margin:0 0 14px;font-size:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.monthbar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.monthbar .lbl{width:92px;font-size:13px;color:var(--muted);flex:0 0 auto}
+.monthbar .track{flex:1;height:22px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.monthbar .fill{height:100%;background:linear-gradient(90deg,var(--red),var(--red2));min-width:2px}
+.monthbar .amt{width:84px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;flex:0 0 auto}
+.linkrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:6px}
 .slist li .qty{width:60px;text-align:center}
 .slist .price{font-variant-numeric:tabular-nums;min-width:64px;text-align:right}
 .totals{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:14px}
@@ -208,6 +217,7 @@ h2.section{font-size:17px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1p
   <button data-view="home">🏠 Τι χρειάζεται</button>
   <button data-view="cart">🛒 Λίστα<span class="badge-count" id="cartBadge" style="display:none">0</span></button>
   <button data-view="offers">🔥 Προσφορές</button>
+  <button data-view="expenses">📊 Δαπάνες</button>
   <button data-view="scan">📷 Σάρωση</button>
   <button data-view="editor">💶 Βάση & Τιμές</button>
   <button data-view="about">ℹ️ Οδηγίες</button>
@@ -268,6 +278,16 @@ h2.section{font-size:17px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1p
     </div>
     <h2 class="section">💶 Σύνολο κόστους ανά κατάστημα</h2>
     <div class="totals" id="cartTotals"></div>
+    <button class="btn big" id="recordPurchase" style="display:none;margin-top:16px">✅ Ολοκλήρωση & καταγραφή αγοράς</button>
+  </section>
+
+  <!-- ΔΑΠΑΝΕΣ -->
+  <section id="expenses" class="view">
+    <h2 class="section">📊 Δαπάνες ανά μήνα</h2>
+    <p class="hint">Κάθε φορά που ολοκληρώνεις μια αγορά από τη λίστα, καταγράφεται εδώ. Δες πόσα ξόδεψες ανά μήνα και το ιστορικό αγορών.</p>
+    <div id="expSummary"></div>
+    <h2 class="section">🧾 Ιστορικό αγορών</h2>
+    <div id="expList"></div>
   </section>
 
   <!-- ΠΡΟΣΦΟΡΕΣ / ΦΥΛΛΑΔΙΑ -->
@@ -339,6 +359,14 @@ h2.section{font-size:17px;margin:18px 0 10px;padding-bottom:8px;border-bottom:1p
       </div>
       <div id="qeBarcodeInfo" class="hint" style="margin-top:8px"></div>
       <div class="scanlog" id="scanLog"></div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h3>🔗 Μαζική σύνδεση barcode</h3>
+      <p class="hint" style="margin-top:4px">Σύνδεσε barcode σε πολλά προϊόντα στη σειρά. Πάτα 📷 δίπλα σε κάθε προϊόν και σκάναρε το barcode του — αποθηκεύεται αμέσως.</p>
+      <input type="search" id="linkSearch" placeholder="🔍 φίλτρο προϊόντων χωρίς barcode" style="width:100%;margin-bottom:10px">
+      <div id="linkCount" class="muted" style="font-size:12px;margin-bottom:8px"></div>
+      <div id="linkList"></div>
     </div>
   </section>
 
@@ -776,6 +804,8 @@ window.SEED = {
   const euro=n=>(n==null||isNaN(n))?"—":n.toLocaleString("el-GR",{style:"currency",currency:"EUR"});
   const today=()=>new Date().toISOString().slice(0,10);
   const dmy=s=>{ if(!s)return""; const a=s.split("-"); return a.length===3?a[2]+"/"+a[1]:s; };
+  function daysUntil(d){ if(!d)return null; const t=new Date(today()+"T00:00:00"), u=new Date(d+"T00:00:00"); return Math.round((u-t)/86400000); }
+  function expiryLabel(d){ const n=daysUntil(d); if(n==null)return""; if(n<0)return"έληξε"; if(n===0)return"λήγει σήμερα"; if(n===1)return"λήγει αύριο"; return"λήγει σε "+n+" ημ."; }
 
   let state=load();
   function load(){
@@ -790,6 +820,7 @@ window.SEED = {
         saved.activeListId="l_default";
       }
       if(!saved.activeListId || !saved.lists.some(l=>l.id===saved.activeListId)) saved.activeListId=saved.lists[0].id;
+      saved.purchases=saved.purchases||[];
       delete saved.cart; delete saved.bought; delete saved.budget;
       // merge νέα καταστήματα/προϊόντα από το SEED — updates χωρίς απώλεια δεδομένων
       SEED.stores.forEach(s=>{ if(!saved.stores.some(x=>x.id===s.id)) saved.stores.push(JSON.parse(JSON.stringify(s))); });
@@ -801,7 +832,7 @@ window.SEED = {
     return {
       stores:JSON.parse(JSON.stringify(SEED.stores)),
       products:JSON.parse(JSON.stringify(SEED.products)),
-      checked:{}, favorites:{},
+      checked:{}, favorites:{}, purchases:[],
       lists:[{ id:"l_default", name:"Η λίστα μου", cart:{}, bought:{}, budget:null }],
       activeListId:"l_default"
     };
@@ -885,6 +916,7 @@ window.SEED = {
     if(b.dataset.view==="editor") renderEditor();
     if(b.dataset.view==="scan") initScanTab();
     if(b.dataset.view==="offers") initOffersTab();
+    if(b.dataset.view==="expenses") renderExpenses();
     window.scrollTo(0,0);
   }));
 
@@ -942,7 +974,8 @@ window.SEED = {
         const tr=document.createElement("tr"); if(isBest) tr.className="best";
         const tr2=lastTrend(p,e.sid);
         const trendHtml=tr2?`<span class="trend ${tr2.dir}">${tr2.dir==="down"?"▼":"▲"} ${euro(Math.abs(tr2.d))}</span>`:"";
-        const offerBadge=e.offer?`<span class="offerbadge">🔥 ΠΡΟΣΦΟΡΑ${e.until?" έως "+dmy(e.until):""}</span>`:"";
+        const soon=e.offer&&e.until&&daysUntil(e.until)!=null&&daysUntil(e.until)<=3;
+        const offerBadge=e.offer?`<span class="offerbadge">🔥 ΠΡΟΣΦΟΡΑ${e.until?" έως "+dmy(e.until):""}</span>${soon?' <span class="expsoon">⏰ '+expiryLabel(e.until)+'</span>':""}`:"";
         const wasHtml=e.offer&&e.was!=null?`<span class="waswas">${euro(e.was)}</span> `:"";
         tr.innerHTML=`<td>${st?st.name:e.sid}${isBest?'<span class="badge">καλύτερη</span>':""}${offerBadge}</td>
           <td>${wasHtml}${euro(e.v)}${trendHtml}<div class="perunit">${perUnit(p,e.v)||""}</div></td>`;
@@ -1045,8 +1078,9 @@ window.SEED = {
     const ids=Object.keys(state.cart);
     if(!ids.length){
       box.innerHTML='<div class="empty">Η λίστα είναι άδεια.<br>Πρόσθεσε προϊόντα από την «Σύγκριση» ή τις λίστες νοικοκυριού.</div>';
-      $("#cartTotals").innerHTML=""; $("#cartSavings").innerHTML=""; $("#cartProgress").innerHTML=""; $("#budgetCard").style.display="none"; return;
+      $("#cartTotals").innerHTML=""; $("#cartSavings").innerHTML=""; $("#cartProgress").innerHTML=""; $("#budgetCard").style.display="none"; $("#recordPurchase").style.display="none"; return;
     }
+    $("#recordPurchase").style.display="flex";
     // πρόοδος «ψωνίζω τώρα»
     const boughtN=ids.filter(id=>state.bought[id]).length;
     const pct=Math.round(boughtN/ids.length*100);
@@ -1135,6 +1169,54 @@ window.SEED = {
     try{ await navigator.clipboard.writeText(t); toast("📋 Αντιγράφηκε η λίστα"); }catch(e){ toast("Αδυναμία αντιγραφής"); } });
   $("#clearCart").addEventListener("click",()=>{ if(confirm("Άδειασμα της λίστας «"+activeList().name+"»;")){ const l=activeList(); l.cart={}; l.bought={}; useActiveList(); save(); updateCartBadge(); renderCart(); }});
   $("#printCart").addEventListener("click",()=>window.print());
+  // ---- Καταγραφή αγοράς (δαπάνες) ----
+  $("#recordPurchase").addEventListener("click",()=>{
+    const ids=Object.keys(state.cart); if(!ids.length){ toast("Η λίστα είναι άδεια"); return; }
+    let total=0; const items=[]; const storeCount={};
+    ids.forEach(pid=>{ const p=prodById(pid); if(!p)return; const b=bestPrice(p); const q=state.cart[pid];
+      const line=b?b.v*q:0; total+=line;
+      items.push({pid,name:p.name,qty:q,price:b?b.v:null,sid:b?b.sid:null,cat:p.cat});
+      if(b){ storeCount[b.sid]=(storeCount[b.sid]||0)+1; } });
+    if(total<=0){ toast("Δεν υπάρχουν τιμές για καταγραφή"); return; }
+    if(!confirm("Καταγραφή αγοράς "+euro(total)+" ("+items.length+" είδη) και άδειασμα της λίστας «"+activeList().name+"»;")) return;
+    const topStore=Object.entries(storeCount).sort((a,b)=>b[1]-a[1])[0];
+    state.purchases.push({ id:"pu_"+Date.now(), date:today(), total:Math.round(total*100)/100,
+      items, listName:activeList().name, store:(topStore?storeById(topStore[0])?.name:"") });
+    const l=activeList(); l.cart={}; l.bought={}; useActiveList();
+    save(); updateCartBadge(); renderCart(); toast("✅ Καταγράφηκε αγορά "+euro(total));
+  });
+  // ---- Δαπάνες ανά μήνα ----
+  const MONTHS=["Ιαν","Φεβ","Μαρ","Απρ","Μάι","Ιουν","Ιουλ","Αυγ","Σεπ","Οκτ","Νοε","Δεκ"];
+  function renderExpenses(){
+    const sum=$("#expSummary"), list=$("#expList");
+    const pur=(state.purchases||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
+    if(!pur.length){ sum.innerHTML=""; list.innerHTML='<div class="empty">Καμία αγορά ακόμη.<br>Φτιάξε λίστα και πάτα «✅ Ολοκλήρωση & καταγραφή αγοράς».</div>'; return; }
+    // ομαδοποίηση ανά μήνα (YYYY-MM)
+    const byMonth={};
+    pur.forEach(x=>{ const m=x.date.slice(0,7); byMonth[m]=(byMonth[m]||0)+x.total; });
+    const months=Object.keys(byMonth).sort().reverse().slice(0,12).reverse();
+    const maxV=Math.max(...months.map(m=>byMonth[m]));
+    const grand=pur.reduce((a,b)=>a+b.total,0);
+    const avg=grand/Object.keys(byMonth).length;
+    let html=`<div class="totals" style="margin-bottom:14px">
+      <div class="tot best"><div class="s">Σύνολο δαπανών</div><div class="v">${euro(grand)}</div></div>
+      <div class="tot"><div class="s">Μέσος όρος/μήνα</div><div class="v">${euro(avg)}</div></div>
+      <div class="tot"><div class="s">Αγορές</div><div class="v">${pur.length}</div></div></div>`;
+    html+="<div>";
+    months.forEach(m=>{ const [y,mo]=m.split("-"); const lbl=MONTHS[+mo-1]+" "+y.slice(2);
+      const w=maxV>0?Math.round(byMonth[m]/maxV*100):0;
+      html+=`<div class="monthbar"><span class="lbl">${lbl}</span><span class="track"><span class="fill" style="width:${w}%"></span></span><span class="amt">${euro(byMonth[m])}</span></div>`; });
+    html+="</div>";
+    sum.innerHTML=html;
+    list.innerHTML="";
+    pur.slice(0,40).forEach(x=>{
+      const d=document.createElement("div"); d.className="offrow"; d.style.borderLeftColor="var(--red)";
+      d.innerHTML=`<span style="flex:1">🧾 <b>${euro(x.total)}</b> <span class="muted">· ${dmy(x.date)}/${x.date.slice(0,4)}</span><div class="perunit">${x.items.length} είδη${x.store?" · "+x.store:""}${x.listName?" · "+x.listName:""}</div></span>`;
+      const del=document.createElement("button"); del.className="btn ghost sm"; del.textContent="✕"; del.title="Διαγραφή εγγραφής";
+      del.onclick=()=>{ state.purchases=state.purchases.filter(p=>p.id!==x.id); save(); renderExpenses(); };
+      d.appendChild(del); list.appendChild(d);
+    });
+  }
 
   /* ---- Προσφορές / Φυλλάδια ---- */
   function initOffersTab(){
@@ -1152,15 +1234,38 @@ window.SEED = {
     const active=rows.filter(r=>!r.o.until||r.o.until>=today()).length;
     $("#offCount").textContent = rows.length? (active+" ενεργές προσφορές"+(rows.length>active?(" · "+(rows.length-active)+" ληγμένες"):"")) : "Καμία προσφορά ακόμη";
     if(!rows.length){ box.innerHTML='<div class="empty">Δεν υπάρχουν προσφορές.<br>Πρόσθεσε μία από πάνω — π.χ. από φυλλάδιο σούπερ μάρκετ.</div>'; return; }
+    // banner για προσφορές που λήγουν σύντομα (≤3 ημ.)
+    const soonRows=rows.filter(r=>{ const n=r.o.until?daysUntil(r.o.until):null; return n!=null&&n>=0&&n<=3; });
+    if(soonRows.length){
+      const b=document.createElement("div"); b.className="expbanner";
+      b.innerHTML=`<span>⏰ <b>${soonRows.length}</b> προσφορ${soonRows.length===1?"ά λήγει":"ές λήγουν"} σε ≤3 ημέρες — πρόλαβέ τες!</span>`;
+      if("Notification" in window && Notification.permission!=="granted"){
+        const nb=document.createElement("button"); nb.className="btn sm"; nb.textContent="🔔 Ενεργοποίηση ειδοποιήσεων";
+        nb.onclick=()=>Notification.requestPermission().then(()=>{ renderOffersList(); notifyExpiring(true); });
+        b.appendChild(nb);
+      }
+      box.appendChild(b);
+    }
     rows.forEach(({p,sid,o})=>{
-      const expired=o.until&&o.until<today();
+      const n=o.until?daysUntil(o.until):null;
+      const expired=n!=null&&n<0; const soon=n!=null&&n>=0&&n<=3;
       const base=p.prices?.[sid];
-      const row=document.createElement("div"); row.className="offrow"+(expired?" expired":"");
-      row.innerHTML=`<span style="flex:1">🔥 <b>${p.name}</b><div class="perunit">${storeById(sid)?.name||sid} · ${base!=null?"<s>"+euro(base)+"</s> → ":""}<b style="color:var(--gold)">${euro(o.price)}</b>${o.until?" · έως "+dmy(o.until)+(expired?" (έληξε)":""):""}</div></span>`;
+      const row=document.createElement("div"); row.className="offrow"+(expired?" expired":(soon?" soon":""));
+      row.innerHTML=`<span style="flex:1">🔥 <b>${p.name}</b><div class="perunit">${storeById(sid)?.name||sid} · ${base!=null?"<s>"+euro(base)+"</s> → ":""}<b style="color:var(--gold)">${euro(o.price)}</b>${o.until?" · "+(expired?"έληξε "+dmy(o.until):(soon?"⏰ "+expiryLabel(o.until):"έως "+dmy(o.until))):""}</div></span>`;
       const del=document.createElement("button"); del.className="btn ghost sm"; del.textContent="✕";
       del.onclick=()=>{ delete p.offers[sid]; save(); renderOffersList(); renderProducts(); renderCatFilters(); };
       row.appendChild(del); box.appendChild(row);
     });
+  }
+  function notifyExpiring(force){
+    // Σύστημα ειδοποίηση για προσφορές που λήγουν ≤3 ημ. (μία φορά/ημέρα)
+    if(!("Notification" in window) || Notification.permission!=="granted") return;
+    if(!force && state.lastOfferNotify===today()) return;
+    const soon=[];
+    state.products.forEach(p=>Object.entries(p.offers||{}).forEach(([sid,o])=>{ if(o&&o.price>0&&o.until){ const n=daysUntil(o.until); if(n!=null&&n>=0&&n<=3) soon.push(p.name); } }));
+    if(!soon.length) return;
+    state.lastOfferNotify=today(); save();
+    try{ new Notification("🔥 ΑΓΟΡΕΣ 360° — Προσφορές λήγουν!", { body: soon.slice(0,5).join(", ")+(soon.length>5?" +"+(soon.length-5):"")+" — λήγουν σε ≤3 ημέρες", icon:"icon-192.png" }); }catch(e){}
   }
   $("#offSave").addEventListener("click",()=>{
     const name=$("#offProd").value.trim(); const sid=$("#offStore").value;
@@ -1186,7 +1291,28 @@ window.SEED = {
     if(!st.dataset.filled){ state.stores.forEach(s=>{ const o=document.createElement("option"); o.value=s.id; o.textContent=s.name; st.appendChild(o); }); st.dataset.filled="1"; }
     const dl=$("#qeProdList"); dl.innerHTML="";
     state.products.forEach(p=>{ const o=document.createElement("option"); o.value=p.name; dl.appendChild(o); });
+    renderLinkList();
   }
+  // ---- Μαζική σύνδεση barcode ----
+  let linkTargetPid=null;
+  function renderLinkList(){
+    const q=($("#linkSearch").value||"").trim().toLowerCase();
+    const box=$("#linkList"); box.innerHTML="";
+    let list=state.products.filter(p=>!p.barcode);
+    const totalNoBc=list.length;
+    if(q) list=list.filter(p=>p.name.toLowerCase().includes(q));
+    $("#linkCount").textContent=totalNoBc+" προϊόντα χωρίς barcode"+(q?(" · "+list.length+" στο φίλτρο"):"");
+    if(!list.length){ box.innerHTML='<div class="empty" style="padding:20px">'+(totalNoBc?"Κανένα αποτέλεσμα.":"🎉 Όλα τα προϊόντα έχουν barcode!")+'</div>'; return; }
+    list.slice(0,60).forEach(p=>{
+      const row=document.createElement("div"); row.className="linkrow";
+      row.innerHTML=`<span style="flex:1">${p.name}<div class="perunit">${catById(p.cat)?.name||""}</div></span>`;
+      const b=document.createElement("button"); b.className="btn sm"; b.textContent="📷 Σάρωσε";
+      b.onclick=()=>{ linkTargetPid=p.id; setScanStatus("🔗 Σάρωση barcode για: <b>"+p.name+"</b>"); openLiveScanner(); };
+      row.appendChild(b); box.appendChild(row);
+    });
+    if(list.length>60){ const m=document.createElement("div"); m.className="hint"; m.textContent="…+"+(list.length-60)+" ακόμη — στένεψε με αναζήτηση."; box.appendChild(m); }
+  }
+  $("#linkSearch").addEventListener("input",renderLinkList);
   function setScanStatus(msg){ $("#scanStatus").innerHTML=msg; }
   $("#btnBarcode").addEventListener("click",()=>$("#fileBarcode").click());
   $("#btnReceipt").addEventListener("click",()=>$("#fileReceipt").click());
@@ -1198,6 +1324,14 @@ window.SEED = {
   });
   const BARCODE_FORMATS=["ean_13","ean_8","upc_a","upc_e","code_128","code_39"];
   async function resolveBarcode(barcode){
+    // Μαζική σύνδεση: αν στοχεύουμε συγκεκριμένο προϊόν, ανάθεσε το barcode κατευθείαν
+    if(linkTargetPid){
+      const tp=prodById(linkTargetPid); const existing=prodByBarcode(barcode);
+      linkTargetPid=null;
+      if(existing && (!tp || existing.id!==tp.id)){ setScanStatus("⚠️ Το barcode "+barcode+" ανήκει ήδη στο «"+existing.name+"»."); renderLinkList(); return; }
+      if(tp){ tp.barcode=barcode; save(); setScanStatus("✅ Συνδέθηκε barcode "+barcode+" με «"+tp.name+"»."); toast("🔗 "+tp.name+" ← "+barcode); renderLinkList(); renderEditor(); }
+      return;
+    }
     $("#qeBarcodeInfo").textContent="Barcode: "+barcode;
     $("#qeBarcodeInfo").dataset.bc=barcode;
     const known=prodByBarcode(barcode);
@@ -1266,7 +1400,7 @@ window.SEED = {
     scanRAF=requestAnimationFrame(tick);
   }
   $("#btnLiveScan").addEventListener("click",openLiveScanner);
-  $("#scanClose").addEventListener("click",()=>{ closeLiveScanner(); setScanStatus("Σάρωση ακυρώθηκε."); });
+  $("#scanClose").addEventListener("click",()=>{ closeLiveScanner(); linkTargetPid=null; setScanStatus("Σάρωση ακυρώθηκε."); });
   $("#qeSave").addEventListener("click",()=>{
     const name=$("#qeProd").value.trim();
     const sid=$("#qeStore").value;
@@ -1364,6 +1498,7 @@ window.SEED = {
       if(d.products&&d.stores){ state=d; state.checked=state.checked||{}; state.favorites=state.favorites||{};
         if(!state.lists){ state.lists=[{id:"l_default",name:"Η λίστα μου",cart:state.cart||{},bought:state.bought||{},budget:(state.budget!==undefined?state.budget:null)}]; state.activeListId="l_default"; }
         if(!state.activeListId||!state.lists.some(l=>l.id===state.activeListId)) state.activeListId=state.lists[0].id;
+        state.purchases=state.purchases||[];
         delete state.cart; delete state.bought; delete state.budget;
         state.products.forEach(p=>{p.history=p.history||[];p.prices=p.prices||{};p.offers=p.offers||{};}); save(); boot(); toast("Εισήχθη επιτυχώς"); }
       else toast("Μη έγκυρο αρχείο");
@@ -1386,6 +1521,8 @@ window.SEED = {
     if($("#editor").classList.contains("active")) renderEditor();
     if($("#scan").classList.contains("active")) initScanTab();
     if($("#offers").classList.contains("active")) initOffersTab();
+    if($("#expenses").classList.contains("active")) renderExpenses();
+    notifyExpiring(false);
   }
   boot();
 

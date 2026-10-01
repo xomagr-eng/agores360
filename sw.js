@@ -1,5 +1,5 @@
 /* ΑΓΟΡΕΣ 360° — Service Worker (offline cache, auto-update) */
-const CACHE = "agores360-v5";
+const CACHE = "agores360-v6";
 const ASSETS = [
   "./",
   "./index.html",
